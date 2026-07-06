@@ -1,0 +1,4 @@
+Sale Date,Order ID,Buyer,Item Name,Quantity,Currency,Item Price,Shipping,Discount,Sales Tax,Order Total,Payment Type,Status
+2026-13-40,E-BADDATE-001,Alice,Canvas Print,1,USD,$24.00,$0.00,$0.00,$1.92,$25.92,Etsy Payments,Paid
+June 31 2026,E-BADDATE-002,Bob,Sticker Pack,1,USD,$12.00,$4.99,$0.00,$0.96,$17.95,Etsy Payments,Paid
+not-a-date,E-BADDATE-003,Carol,Ceramic Mug,1,USD,$30.00,$3.99,$5.00,$1.16,$30.15,Etsy Payments,Paid

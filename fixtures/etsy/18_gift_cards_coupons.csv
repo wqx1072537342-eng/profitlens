@@ -1,0 +1,5 @@
+Sale Date,Order ID,Item Name,Quantity,Currency,Item Price,Shipping,Seller Funded Discount,Etsy Funded Coupon,Payment Type,Status
+2026-06-15,E-GIFT-001,Gift Card Print,1,USD,$50.00,$0.00,$0.00,$0.00,Gift Card,Paid
+2026-06-16,E-GIFT-002,Credit Card Print,1,USD,$50.00,$0.00,$0.00,$0.00,Credit Card,Paid
+2026-06-17,E-GIFT-003,Seller Discount Print,1,USD,$50.00,$0.00,$5.00,$0.00,Credit Card,Paid
+2026-06-18,E-GIFT-004,Etsy Coupon Print,1,USD,$50.00,$0.00,$0.00,$5.00,Etsy Credit,Paid

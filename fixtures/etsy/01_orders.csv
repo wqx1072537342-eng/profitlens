@@ -1,0 +1,6 @@
+Sale Date,Order ID,Buyer,Item Name,Quantity,Currency,Item Price,Shipping,Discount,Sales Tax,Order Total,Payment Type,Status
+2026-06-01,E-1001,Alice,Canvas Print,1,USD,$24.00,$0.00,$0.00,$1.92,$25.92,Etsy Payments,Paid
+2026/06/02,E-1002,Bob,Sticker Pack,3,USD,$12.00,$4.99,$0.00,$2.88,$43.87,Etsy Payments,Paid
+06/03/2026,E-1003,Carol,Ceramic Mug,1,USD,$30.00,$3.99,$5.00,$1.16,$30.15,PayPal,Paid
+Jun 4 2026,E-1004,Devon,Tote Bag,2,USD,$18.00,$0.00,$0.00,$2.88,$38.88,Etsy Payments,Paid
+2026.06.05,E-1005,Erin,Digital Planner,1,USD,$15.00,$0.00,$0.00,$0.00,$15.00,Etsy Payments,Paid

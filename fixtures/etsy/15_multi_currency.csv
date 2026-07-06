@@ -1,0 +1,6 @@
+Date,Type,Order ID,Original Amount,Original Currency,Reporting Amount,Reporting Currency,FX Rate
+2026-06-11,Sale,E-MC-001,$10.00,USD,$10.00,USD,1
+2026-06-12,Sale,E-MC-002,20.00,EUR,,USD,1.1
+2026-06-12,Fee,E-MC-002,-2.00,EUR,-2.30,USD,1.1
+2026-06-13,Sale,E-MC-003,10.00,GBP,12.50,USD,1.25
+2026-06-13,Fee,E-MC-003,-1.00,GBP,,USD,1.25

@@ -1,0 +1,12 @@
+{
+  "currency": "USD",
+  "grossSales": 136,
+  "refunds": -40.44,
+  "shippingIncome": 8.98,
+  "shippingLabelCost": -19.57,
+  "etsyFees": -12.46,
+  "etsyAds": -33.81,
+  "offsiteAds": -9.95,
+  "salesTax": 8.84,
+  "netProfit": 28.75
+}

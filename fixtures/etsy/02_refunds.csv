@@ -1,0 +1,4 @@
+Date,Order ID,Type,Amount,Currency,Reason
+2026-06-06,E-1003,Full Refund,-$30.15,USD,Item returned
+2026/06/07,E-1002,Partial Refund,-$5.30,USD,Customer adjustment
+06/08/2026,E-1002,Shipping Refund,-$4.99,USD,Shipping overage

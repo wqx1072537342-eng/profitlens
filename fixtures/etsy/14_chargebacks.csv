@@ -1,0 +1,5 @@
+Date,Type,Order ID,Amount,Currency,Reason
+2026-06-12,Chargeback Principal,E-1003,-$25.00,USD,Card dispute
+2026-06-12,Chargeback Fee,E-1003,-$3.00,USD,Processor fee
+2026-06-15,Chargeback Reversal,E-1003,$10.00,USD,Partial reversal
+2026-06-16,Etsy Case Refund,E-1004,-$8.00,USD,Case resolved

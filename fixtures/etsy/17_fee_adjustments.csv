@@ -1,0 +1,6 @@
+Date,Order ID,Adjustment Type,Amount,Currency,Reason
+2026-06-07,E-1001,Transaction Fee Credit,$1.56,USD,Refunded fee
+2026-06-07,E-1003,Processing Fee Credit,$0.50,USD,Partial processing credit
+2026-06-08,E-1005,Listing Fee Credit,$0.20,USD,Listing adjustment
+2026-06-08,E-1002,Shipping Label Refund,$4.82,USD,Voided label
+2026-06-09,E-1004,Regulatory Fee Adjustment,-$0.30,USD,Regulatory adjustment

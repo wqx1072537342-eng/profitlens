@@ -1,0 +1,6 @@
+SKU,Item Name,Unit COGS,Packaging Cost,External Fulfillment Cost,Currency
+SKU-CANVAS,Canvas Print,$8.00,$1.25,$0.00,USD
+SKU-STICKER,Sticker Pack,$4.50,$0.75,$0.00,USD
+SKU-MUG,Ceramic Mug,$9.00,$1.50,$2.00,USD
+SKU-TOTE,Tote Bag,$6.00,$1.00,$0.00,USD
+SKU-DIGITAL,Digital Planner,$0.00,$0.00,$0.00,USD

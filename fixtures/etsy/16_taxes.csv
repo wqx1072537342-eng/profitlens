@@ -1,0 +1,5 @@
+Date,Type,Order ID,Amount,Currency
+2026-06-01,VAT,E-TAX-001,$5.00,USD
+2026-06-02,GST,E-TAX-002,$3.00,USD
+2026-06-03,Marketplace Collected Tax,E-TAX-003,$12.30,USD
+2026-06-04,Tax on Seller Fees,E-TAX-004,-$1.20,USD

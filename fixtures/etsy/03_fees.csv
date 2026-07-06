@@ -1,0 +1,7 @@
+Date,Order ID,Fee Type,Amount,Currency
+2026-06-01,E-1001,Transaction Fee,-$1.56,USD
+2026-06-02,E-1002,Transaction Fee,-$2.63,USD
+2026-06-03,E-1003,Payment Processing Fee,-$1.50,USD
+2026-06-04,E-1004,Payment Processing Fee,-$2.74,USD
+2026-06-05,E-1005,Listing Fee,-$1.00,USD
+2026-06-05,E-1005,Transaction Fee,-$3.03,USD

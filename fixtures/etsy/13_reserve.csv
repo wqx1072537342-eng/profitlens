@@ -1,0 +1,3 @@
+Date,Type,Order ID,Amount,Currency,Release Date,Reason
+2026-06-06,reserveHeld,E-1002,-$20.00,USD,2026-06-20,Payment account reserve
+2026-06-08,reserveReleased,E-1001,$5.00,USD,2026-06-08,Reserve released
