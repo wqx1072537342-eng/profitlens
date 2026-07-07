@@ -50,10 +50,10 @@ export default async function DashboardPage() {
       <section className="grid gap-4 rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-            Sprint 2 status
+            Sprint 3 status
           </p>
           <h2 className="mt-2 text-2xl font-black text-slate-950">
-            CSV upload foundation is ready to use
+            CSV upload and Profit Preview are ready to use
           </h2>
         </div>
         <div className="grid gap-3 md:grid-cols-3">
@@ -67,13 +67,13 @@ export default async function DashboardPage() {
           </div>
           <div className="rounded-md border border-stone-200 p-4">
             <p className="text-sm font-semibold text-slate-500">Reports</p>
-            <p className="mt-2 text-lg font-black text-slate-950">Later sprint</p>
+            <p className="mt-2 text-lg font-black text-teal-800">Profit Preview</p>
           </div>
         </div>
         <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
-          Sprint 2 supports CSV file selection, metadata saving, file type recognition,
-          field preview, and warnings. Profit calculation, report generation, export,
-          and payment remain intentionally out of scope.
+          Sprint 3 supports CSV file selection, metadata saving, file type recognition,
+          field preview, warnings, and a basic Profit Preview. PDF, Excel, Stripe,
+          and real Etsy API connections remain intentionally out of scope.
         </p>
       </section>
     </div>

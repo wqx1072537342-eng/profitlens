@@ -30,6 +30,78 @@ export interface Database {
         };
         Relationships: [];
       };
+      reports: {
+        Row: {
+          id: string;
+          user_id: string;
+          upload_batch_id: string;
+          status: string;
+          currency: string;
+          gross_sales: number;
+          refunds: number;
+          fees: number;
+          ads: number;
+          shipping: number;
+          tax_collected: number;
+          net_profit_before_cogs: number;
+          net_profit_after_cogs: number;
+          warnings_json: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          upload_batch_id: string;
+          status?: string;
+          currency?: string;
+          gross_sales?: number;
+          refunds?: number;
+          fees?: number;
+          ads?: number;
+          shipping?: number;
+          tax_collected?: number;
+          net_profit_before_cogs?: number;
+          net_profit_after_cogs?: number;
+          warnings_json?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          upload_batch_id?: string;
+          status?: string;
+          currency?: string;
+          gross_sales?: number;
+          refunds?: number;
+          fees?: number;
+          ads?: number;
+          shipping?: number;
+          tax_collected?: number;
+          net_profit_before_cogs?: number;
+          net_profit_after_cogs?: number;
+          warnings_json?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "reports_upload_batch_id_fkey";
+            columns: ["upload_batch_id"];
+            isOneToOne: false;
+            referencedRelation: "upload_batches";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "reports_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       upload_batches: {
         Row: {
           id: string;

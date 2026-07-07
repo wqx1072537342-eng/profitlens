@@ -436,6 +436,13 @@ export async function calculateUploadedReconciliation(
       ...parsed.warnings,
       ...validateRows(input.fileName, fileType, parsed.headers, parsed.rows),
     ];
+    if (parsed.headers.length === 0 && parsed.rows.length === 0) {
+      fileWarnings.push({
+        code: "EMPTY_CSV_FILE",
+        message: "CSV file is empty.",
+        filePath: input.fileName,
+      });
+    }
     const missingFields = fileWarnings
       .filter((warning) => warning.code === "MISSING_REQUIRED_FIELD")
       .map((warning) => warning.field)

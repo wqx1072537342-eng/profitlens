@@ -1,7 +1,13 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 
+import { generateProfitPreviewAction } from "@/features/reports/actions";
+import type {
+  GenerateProfitPreviewResult,
+  ProfitPreviewCsvInput,
+} from "@/features/reports/types";
 import {
   analyzeEtsyCsvUpload,
   MAX_UPLOAD_FILE_SIZE_BYTES,
@@ -41,10 +47,15 @@ interface UploadCsvClientProps {
 }
 
 export function UploadCsvClient({ userEmail }: UploadCsvClientProps) {
+  const router = useRouter();
   const [analyses, setAnalyses] = useState<EtsyCsvUploadAnalysis[]>([]);
+  const [csvInputs, setCsvInputs] = useState<ProfitPreviewCsvInput[]>([]);
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [saveResult, setSaveResult] = useState<SaveUploadBatchResult | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [previewResult, setPreviewResult] =
+    useState<GenerateProfitPreviewResult | null>(null);
+  const [isSaving, startSaveTransition] = useTransition();
+  const [isGenerating, startGenerateTransition] = useTransition();
   const warningCount = useMemo(
     () => analyses.reduce((sum, analysis) => sum + analysis.warnings.length, 0),
     [analyses],
@@ -52,12 +63,14 @@ export function UploadCsvClient({ userEmail }: UploadCsvClientProps) {
 
   async function handleFiles(files: FileList | null) {
     setSaveResult(null);
+    setPreviewResult(null);
 
     const selectedFiles = Array.from(files ?? []);
     const nextErrors: string[] = [];
 
     if (selectedFiles.length === 0) {
       setAnalyses([]);
+      setCsvInputs([]);
       setErrorMessages([]);
       return;
     }
@@ -87,25 +100,63 @@ export function UploadCsvClient({ userEmail }: UploadCsvClientProps) {
 
     if (nextErrors.length > 0) {
       setAnalyses([]);
+      setCsvInputs([]);
       setErrorMessages(nextErrors);
       return;
     }
 
-    const nextAnalyses = await Promise.all(
-      selectedFiles.map(async (file) =>
-        analyzeEtsyCsvUpload({
-          fileName: file.name,
-          fileSizeBytes: file.size,
-          text: await file.text(),
-        }),
-      ),
+    const nextCsvInputs = await Promise.all(
+      selectedFiles.map(async (file) => ({
+        fileName: file.name,
+        text: await file.text(),
+      })),
+    );
+    const nextAnalyses = nextCsvInputs.map((input, index) =>
+      analyzeEtsyCsvUpload({
+        fileName: input.fileName,
+        fileSizeBytes: selectedFiles[index]?.size ?? 0,
+        text: input.text,
+      }),
     );
 
     setAnalyses(nextAnalyses);
+    setCsvInputs(nextCsvInputs);
     setErrorMessages([]);
 
-    startTransition(() => {
+    startSaveTransition(() => {
       void saveUploadBatchAction(nextAnalyses.map(toUploadMetadata)).then(setSaveResult);
+    });
+  }
+
+  function handleGeneratePreview() {
+    if (saveResult?.status !== "success" || !saveResult.batchId) {
+      setPreviewResult({
+        message: "Wait for upload metadata to save before generating a preview.",
+        status: "error",
+      });
+      return;
+    }
+
+    if (csvInputs.length === 0) {
+      setPreviewResult({
+        message: "Select CSV files again before generating a preview.",
+        status: "error",
+      });
+      return;
+    }
+
+    const uploadBatchId = saveResult.batchId;
+
+    startGenerateTransition(() => {
+      void generateProfitPreviewAction({
+        files: csvInputs,
+        uploadBatchId,
+      }).then((result) => {
+        setPreviewResult(result);
+        if (result.status === "success") {
+          router.push(`/reports/${result.reportId}`);
+        }
+      });
     });
   }
 
@@ -115,19 +166,19 @@ export function UploadCsvClient({ userEmail }: UploadCsvClientProps) {
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase text-teal-800">
-              CSV Upload Foundation
+              Profit Preview
             </p>
             <h1 className="mt-2 text-3xl font-black text-slate-950">
               Upload Etsy CSV files
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
               Signed in as <span className="font-semibold">{userEmail}</span>. Choose
-              official Etsy CSV exports to identify file types, inspect fields, and
-              review warnings before profit calculation is added in a later sprint.
+              official Etsy CSV exports to identify file types, review warnings, and
+              generate a basic profit preview for bookkeeping preparation.
             </p>
           </div>
           <div className="rounded-md border border-teal-200 bg-teal-50 px-3 py-2 text-sm font-semibold text-teal-900">
-            Metadata only. No Stripe, no Etsy API, no report generation.
+            No Stripe, no Etsy API, no raw CSV storage.
           </div>
         </div>
       </section>
@@ -139,7 +190,8 @@ export function UploadCsvClient({ userEmail }: UploadCsvClientProps) {
             <p className="mt-2 text-sm leading-6 text-slate-600">
               Up to {MAX_UPLOAD_FILES} files, {formatBytes(MAX_UPLOAD_FILE_SIZE_BYTES)}{" "}
               max each. Supported: orders, refunds, fees, ads, offsite ads, shipping
-              labels, sales tax, and deposits.
+              labels, sales tax, and deposits. The selected CSV content is used only
+              to generate the preview and is not stored.
             </p>
           </div>
           <label className="inline-flex cursor-pointer items-center justify-center rounded-md bg-teal-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-teal-800">
@@ -180,10 +232,52 @@ export function UploadCsvClient({ userEmail }: UploadCsvClientProps) {
           </div>
         ) : null}
 
-        {isPending ? (
+        {isSaving ? (
           <p className="rounded-md border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
             Saving upload metadata...
           </p>
+        ) : null}
+
+        {analyses.length > 0 ? (
+          <div className="flex flex-col gap-3 rounded-md border border-stone-200 bg-stone-50 p-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h3 className="text-lg font-black text-slate-950">
+                Generate Profit Preview
+              </h3>
+              <p className="mt-1 text-sm leading-6 text-slate-600">
+                This creates a saved report summary from the current upload batch.
+                This is bookkeeping preparation, not tax advice.
+              </p>
+            </div>
+            <button
+              className="rounded-md bg-slate-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+              disabled={
+                isSaving ||
+                isGenerating ||
+                saveResult?.status !== "success" ||
+                !saveResult.batchId
+              }
+              onClick={handleGeneratePreview}
+              type="button"
+            >
+              {isGenerating ? "Generating..." : "Generate Preview"}
+            </button>
+          </div>
+        ) : null}
+
+        {previewResult ? (
+          <div
+            className={`rounded-md border px-4 py-3 text-sm ${
+              previewResult.status === "success"
+                ? "border-teal-200 bg-teal-50 text-teal-950"
+                : "border-rose-200 bg-rose-50 text-rose-950"
+            }`}
+          >
+            <p className="font-semibold">{previewResult.message}</p>
+            {previewResult.status === "success" ? (
+              <p className="mt-1 text-xs">Opening report preview...</p>
+            ) : null}
+          </div>
         ) : null}
       </section>
 
@@ -220,7 +314,7 @@ export function UploadCsvClient({ userEmail }: UploadCsvClientProps) {
                     {analysis.fileTypeLabel}
                   </h3>
                   <p className="mt-2 text-sm text-slate-600">
-                    {formatBytes(analysis.fileSizeBytes)} · {analysis.rowCount} rows ·{" "}
+                    {formatBytes(analysis.fileSizeBytes)} / {analysis.rowCount} rows /{" "}
                     {analysis.confidence}% confidence
                   </p>
                 </div>

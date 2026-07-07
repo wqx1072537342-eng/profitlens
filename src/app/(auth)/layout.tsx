@@ -17,8 +17,8 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
               Upload Etsy CSV, get a CPA-ready profit report.
             </h1>
             <p className="mt-5 text-lg leading-8 text-slate-600">
-              Sprint 1 sets up secure accounts so sellers can return to their
-              reports later. CSV upload and report generation stay in later sprints.
+              Create an account to upload Etsy CSV files, generate a bookkeeping
+              profit preview, and return to saved report summaries.
             </p>
           </div>
         </section>
@@ -29,4 +29,3 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
     </main>
   );
 }
-

@@ -5,6 +5,11 @@ const projectRoot = dirname(fileURLToPath(import.meta.url));
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "110mb",
+    },
+  },
   turbopack: {
     root: projectRoot,
   },

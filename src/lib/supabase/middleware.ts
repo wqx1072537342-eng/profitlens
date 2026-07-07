@@ -4,7 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { getSupabaseConfig } from "./env";
 import type { Database } from "./types";
 
-const protectedRoutes = ["/dashboard", "/upload"];
+const protectedRoutes = ["/dashboard", "/upload", "/reports"];
 const authRoutes = ["/login", "/signup"];
 
 function isRouteMatch(pathname: string, routes: string[]) {
