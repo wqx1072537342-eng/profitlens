@@ -4,7 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { getSupabaseConfig } from "./env";
 import type { Database } from "./types";
 
-const protectedRoutes = ["/dashboard"];
+const protectedRoutes = ["/dashboard", "/upload"];
 const authRoutes = ["/login", "/signup"];
 
 function isRouteMatch(pathname: string, routes: string[]) {
@@ -63,4 +63,3 @@ export async function updateSession(request: NextRequest) {
 
   return response;
 }
-

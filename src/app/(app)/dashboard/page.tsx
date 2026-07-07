@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 import { signOutAction } from "@/features/auth/actions";
 import { getCurrentUser } from "@/features/auth/session";
@@ -18,7 +19,7 @@ export default async function DashboardPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wide text-teal-800">
-              Protected dashboard
+              ProfitLens dashboard
             </p>
             <h1 className="mt-2 text-3xl font-black text-slate-950">
               Welcome to ProfitLens
@@ -27,24 +28,32 @@ export default async function DashboardPage() {
               Signed in as <span className="font-semibold">{user.email}</span>.
             </p>
           </div>
-          <form action={signOutAction}>
-            <button
-              className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-              type="submit"
+          <div className="flex flex-wrap gap-2">
+            <Link
+              className="rounded-md bg-teal-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-800"
+              href="/upload"
             >
-              Log out
-            </button>
-          </form>
+              Upload CSV
+            </Link>
+            <form action={signOutAction}>
+              <button
+                className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                type="submit"
+              >
+                Log out
+              </button>
+            </form>
+          </div>
         </div>
       </section>
 
       <section className="grid gap-4 rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-            Sprint 1 status
+            Sprint 2 status
           </p>
           <h2 className="mt-2 text-2xl font-black text-slate-950">
-            Account foundation is ready
+            CSV upload foundation is ready to use
           </h2>
         </div>
         <div className="grid gap-3 md:grid-cols-3">
@@ -53,20 +62,20 @@ export default async function DashboardPage() {
             <p className="mt-2 text-lg font-black text-teal-800">Enabled</p>
           </div>
           <div className="rounded-md border border-stone-200 p-4">
-            <p className="text-sm font-semibold text-slate-500">Reports</p>
-            <p className="mt-2 text-lg font-black text-slate-950">No reports yet</p>
+            <p className="text-sm font-semibold text-slate-500">Upload</p>
+            <p className="mt-2 text-lg font-black text-teal-800">CSV preview</p>
           </div>
           <div className="rounded-md border border-stone-200 p-4">
-            <p className="text-sm font-semibold text-slate-500">Next sprint</p>
-            <p className="mt-2 text-lg font-black text-slate-950">CSV upload</p>
+            <p className="text-sm font-semibold text-slate-500">Reports</p>
+            <p className="mt-2 text-lg font-black text-slate-950">Later sprint</p>
           </div>
         </div>
         <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
-          CSV upload, parser, calculation, export, and download flows are outside
-          Sprint 1 and are intentionally not implemented here.
+          Sprint 2 supports CSV file selection, metadata saving, file type recognition,
+          field preview, and warnings. Profit calculation, report generation, export,
+          and payment remain intentionally out of scope.
         </p>
       </section>
     </div>
   );
 }
-

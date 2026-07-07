@@ -15,7 +15,8 @@ export type WarningCode =
   | "MISSING_FX_RATE"
   | "INVALID_FX_RATE"
   | "DEPOSIT_MISMATCH"
-  | "CROSS_FILE_ORDER_AMOUNT_MISMATCH";
+  | "CROSS_FILE_ORDER_AMOUNT_MISMATCH"
+  | "EMPTY_CSV_FILE";
 
 export interface CsvWarning {
   code: WarningCode;

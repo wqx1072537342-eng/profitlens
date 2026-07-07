@@ -13,6 +13,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <Link className="text-teal-800 hover:text-teal-900" href="/dashboard">
               Dashboard
             </Link>
+            <Link className="text-teal-800 hover:text-teal-900" href="/upload">
+              Upload CSV
+            </Link>
           </nav>
         </div>
       </header>
@@ -20,4 +23,3 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     </main>
   );
 }
-
