@@ -11,6 +11,8 @@ describe("admin usage analytics", () => {
       .toBe(true);
     expect(isAdminEmail("seller@example.com", "admin@example.com")).toBe(false);
     expect(isAdminEmail(null, "admin@example.com")).toBe(false);
+    expect(isAdminEmail("admin@example.com", "")).toBe(false);
+    expect(isAdminEmail(" admin@example.com ", " admin@example.com ")).toBe(true);
   });
 
   it("builds customer usage and conversion metrics", () => {
@@ -76,14 +78,35 @@ describe("admin usage analytics", () => {
       ],
     });
 
-    expect(dashboard.metrics).toEqual({
+    expect(dashboard.metrics).toMatchObject({
+      highIntentUsers: 1,
+      reportToDownloadRate: 50,
+      reportsWithWarnings: 1,
+      reportWarningRate: 50,
+      signupToUploadRate: 33.3,
       totalDownloads: 2,
       totalReports: 2,
       totalUploadBatches: 1,
       totalUploadedFiles: 1,
       totalUsers: 3,
+      uploadToReportRate: 100,
+      usersWithAtLeastOneUpload: 1,
       usersWithAtLeastOneDownload: 1,
       usersWithAtLeastOneReport: 2,
+    });
+    expect(dashboard.conversionFunnel.map((step) => step.label)).toEqual([
+      "Signed up",
+      "Uploaded CSV",
+      "Generated report",
+      "Downloaded Excel",
+    ]);
+    expect(dashboard.highIntentUsers[0]).toMatchObject({
+      downloadCount: 2,
+      email: "seller1@example.com",
+      reportCount: 1,
+      uploadBatchCount: 1,
+      uploadFileCount: 1,
+      warningCount: 1,
     });
     expect(dashboard.recentReports[0]).toMatchObject({
       downloadCount: 2,

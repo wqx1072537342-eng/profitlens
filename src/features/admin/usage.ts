@@ -32,8 +32,7 @@ export async function loadAdminUsageDashboard(): Promise<AdminUsageResult> {
     };
   }
 
-  const adminEmails =
-    process.env.ADMIN_EMAIL ?? process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? "";
+  const adminEmails = process.env.ADMIN_EMAIL ?? "";
 
   if (!isAdminEmail(user.email, adminEmails)) {
     return {

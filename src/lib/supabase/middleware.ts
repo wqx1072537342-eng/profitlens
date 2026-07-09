@@ -5,6 +5,7 @@ import { getSupabaseConfig } from "./env";
 import type { Database } from "./types";
 
 const protectedRoutes = [
+  "/admin",
   "/dashboard",
   "/data-import",
   "/upload",
