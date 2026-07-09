@@ -42,6 +42,13 @@ export interface UploadedCsvInput {
   text: string;
 }
 
+export interface UploadedParsedCsvInput {
+  fileName: string;
+  fileType: UploadedCsvType;
+  headers: string[];
+  rows: CsvRow[];
+}
+
 export interface UploadedCsvAnalysis {
   fileName: string;
   fileType: UploadedCsvType;
@@ -462,6 +469,19 @@ export async function calculateUploadedReconciliation(
     });
   }
 
+  const report = buildReportFromGroups(groups, warnings);
+
+  return {
+    report,
+    files,
+    warnings,
+  };
+}
+
+function buildReportFromGroups(
+  groups: CsvGroups,
+  warnings: CsvWarning[],
+): ReconciliationReport {
   const currency = firstCurrency(groups);
   let grossSales = 0;
   let shippingIncome = 0;
@@ -700,6 +720,51 @@ export async function calculateUploadedReconciliation(
     depositReconciliations,
     warnings,
   };
+
+  return report;
+}
+
+export async function calculateUploadedReconciliationFromParsedRows(
+  inputs: readonly UploadedParsedCsvInput[],
+): Promise<UploadedReconciliationResult> {
+  const groups: CsvGroups = { ...EMPTY_GROUPS };
+  const files: UploadedCsvAnalysis[] = [];
+  const warnings: CsvWarning[] = [];
+
+  for (const input of inputs) {
+    const fileWarnings = validateRows(
+      input.fileName,
+      input.fileType,
+      input.headers,
+      input.rows,
+    );
+    if (input.headers.length === 0 && input.rows.length === 0) {
+      fileWarnings.push({
+        code: "EMPTY_CSV_FILE",
+        message: "CSV file is empty.",
+        filePath: input.fileName,
+      });
+    }
+    const missingFields = fileWarnings
+      .filter((warning) => warning.code === "MISSING_REQUIRED_FIELD")
+      .map((warning) => warning.field)
+      .filter((field): field is string => Boolean(field));
+
+    groups[input.fileType] = [...groups[input.fileType], ...input.rows];
+    warnings.push(...fileWarnings);
+    files.push({
+      fileName: input.fileName,
+      fileType: input.fileType,
+      confidence: confidenceForType(input.headers, input.fileType),
+      headers: input.headers,
+      previewRows: input.rows.slice(0, 5),
+      rowCount: input.rows.length,
+      missingFields,
+      warnings: fileWarnings,
+    });
+  }
+
+  const report = buildReportFromGroups(groups, warnings);
 
   return {
     report,

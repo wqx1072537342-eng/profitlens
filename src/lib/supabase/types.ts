@@ -46,6 +46,9 @@ export interface Database {
           net_profit_before_cogs: number;
           net_profit_after_cogs: number;
           warnings_json: Json;
+          completeness_status: string;
+          included_file_types_json: Json;
+          missing_file_types_json: Json;
           created_at: string;
           updated_at: string;
         };
@@ -64,6 +67,9 @@ export interface Database {
           net_profit_before_cogs?: number;
           net_profit_after_cogs?: number;
           warnings_json?: Json;
+          completeness_status?: string;
+          included_file_types_json?: Json;
+          missing_file_types_json?: Json;
           created_at?: string;
           updated_at?: string;
         };
@@ -82,6 +88,9 @@ export interface Database {
           net_profit_before_cogs?: number;
           net_profit_after_cogs?: number;
           warnings_json?: Json;
+          completeness_status?: string;
+          included_file_types_json?: Json;
+          missing_file_types_json?: Json;
           created_at?: string;
           updated_at?: string;
         };
@@ -95,6 +104,45 @@ export interface Database {
           },
           {
             foreignKeyName: "reports_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      download_events: {
+        Row: {
+          id: string;
+          user_id: string;
+          report_id: string;
+          file_type: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          report_id: string;
+          file_type: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          report_id?: string;
+          file_type?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "download_events_report_id_fkey";
+            columns: ["report_id"];
+            isOneToOne: false;
+            referencedRelation: "reports";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "download_events_user_id_fkey";
             columns: ["user_id"];
             isOneToOne: false;
             referencedRelation: "users";
@@ -156,6 +204,7 @@ export interface Database {
           storage_path: string | null;
           headers_json: Json;
           preview_rows_json: Json;
+          rows_json: Json;
           warnings_json: Json;
           created_at: string;
           updated_at: string;
@@ -172,6 +221,7 @@ export interface Database {
           storage_path?: string | null;
           headers_json?: Json;
           preview_rows_json?: Json;
+          rows_json?: Json;
           warnings_json?: Json;
           created_at?: string;
           updated_at?: string;
@@ -188,6 +238,7 @@ export interface Database {
           storage_path?: string | null;
           headers_json?: Json;
           preview_rows_json?: Json;
+          rows_json?: Json;
           warnings_json?: Json;
           created_at?: string;
           updated_at?: string;

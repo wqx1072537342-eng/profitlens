@@ -11,17 +11,43 @@ The MVP database should stay small. It only needs to support users, upload batch
 - report_items
 - download_events
 
+Approved SaaS upgrade candidate tables:
+
+- profiles
+- feedback_messages
+
 ## users
 
-Stores account identity.
+Stores account identity synchronized from Supabase Auth.
 
 Suggested fields:
 
 - id: primary key.
 - email: unique user email.
-- password_hash: password hash if password login is used.
 - created_at: account creation time.
 - updated_at: last update time.
+
+Do not store password hashes in `public.users` when using Supabase Auth.
+
+## profiles
+
+Stores lightweight SaaS profile and onboarding state.
+
+Suggested fields:
+
+- id: primary key.
+- user_id: linked user.
+- display_name: optional name.
+- business_type: Etsy Seller, Shopify Coming Soon, Amazon Coming Soon, Other.
+- onboarding_completed: boolean.
+- created_at: creation time.
+- updated_at: last update time.
+
+Rules:
+
+- This table is optional until onboarding/settings need it.
+- Must have RLS.
+- Users can read and update only their own profile.
 
 ## upload_batches
 
@@ -51,6 +77,7 @@ Suggested fields:
 - row_count: parsed row count.
 - status: uploaded, parsed, warning, failed.
 - warnings_json: parser warnings.
+- rows_json: parsed rows when raw CSV files are not stored.
 - created_at: upload time.
 
 ## reports
@@ -74,6 +101,9 @@ Suggested fields:
 - net_profit_before_cogs: profit before COGS.
 - net_profit_after_cogs: profit after COGS.
 - status: draft, preview, ready, failed.
+- completeness_status: complete, partial, limited.
+- included_file_types_json: recognized CSV types included in calculation.
+- missing_file_types_json: missing CSV types that may affect accuracy.
 - created_at: report creation time.
 - updated_at: last update time.
 
@@ -109,6 +139,27 @@ Suggested fields:
 - ip_hash: optional hashed IP for abuse monitoring.
 - user_agent_hash: optional hashed user agent for abuse monitoring.
 
+## feedback_messages
+
+Stores user-reported blockers and paid-intent signals.
+
+Suggested fields:
+
+- id: primary key.
+- user_id: linked user, nullable only if public feedback is later allowed.
+- email: contact email.
+- category: feedback category.
+- message: user feedback.
+- status: new, reviewed, resolved, ignored.
+- created_at: creation time.
+
+Rules:
+
+- Add only when moving beyond mailto feedback.
+- Must have RLS.
+- Users can create feedback and read their own feedback if feedback history is shown.
+- Admin/service role can review feedback later.
+
 ## Field Rules
 
 - Amounts should be stored as decimal values, not floating point where possible.
@@ -117,3 +168,6 @@ Suggested fields:
 - Parser warnings should be saved so the user can review incomplete data.
 - Default MVP report download is free and should not require a billing record.
 - Avoid adding tables until a real MVP flow requires them.
+- Pricing and billing preview pages do not require subscription tables yet.
+- Do not create `subscriptions` until real Stripe or paid experiment implementation is approved.
+- Do not create Shopify, Amazon, AI, team, API, or platform connection tables in the Etsy-first MVP.

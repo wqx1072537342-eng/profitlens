@@ -24,9 +24,15 @@ Ship a usable MVP in 30 days:
 
 ## Current Stage Goal
 
-The current stage is MVP definition and execution. Documentation should help Codex and the founder make product, design, database, and sprint decisions without expanding scope.
+The current stage is MVP execution plus a professional SaaS experience upgrade. Documentation should help Codex and the founder make product, design, database, and sprint decisions without expanding scope.
 
-The goal is not to create a large platform plan. The goal is to support fast development, fast launch, fast user validation, and later paid validation.
+The approved direction is:
+
+> Keep ProfitLens Etsy-first, but upgrade the website and logged-in app to feel like a trustworthy professional SaaS product.
+
+This means ProfitLens may add professional SaaS pages and product surfaces such as pricing, billing preview, account, settings, feedback, onboarding, and a better dashboard. These additions must support the Etsy CSV Profit Report workflow and paid validation.
+
+This does not mean ProfitLens is becoming a multi-platform analytics platform yet. Shopify, Amazon, and AI features may be shown as Coming Soon or waitlist concepts, but they must not become real product scope until the Etsy MVP proves demand.
 
 ## Core Principles
 
@@ -37,3 +43,6 @@ The goal is not to create a large platform plan. The goal is to support fast dev
 - Prefer clear reports over complex analytics.
 - Prefer fast user validation over perfect architecture.
 - Keep monetization experiments simple and separate from the default free MVP download flow.
+- Make the product look credible enough for sellers to trust it with financial CSV data.
+- Use pricing, billing preview, and feedback surfaces to learn whether users would pay before adding payment friction.
+- Keep Shopify, Amazon, AI Assistant, teams, and API access out of the real MVP feature set.

@@ -29,6 +29,8 @@ describe("csv upload foundation", () => {
         "06_shipping_labels.csv",
         "07_sales_tax.csv",
         "08_deposits.csv",
+        "16_taxes.csv",
+        "19_cogs.csv",
       ].map(analyzeFixture),
     );
 
@@ -41,6 +43,8 @@ describe("csv upload foundation", () => {
       "shippingLabels",
       "salesTax",
       "deposits",
+      "taxes",
+      "cogs",
     ]);
     expect(analyses.every((analysis) => analysis.previewRows.length <= 5)).toBe(true);
     expect(analyses.every((analysis) => analysis.headers.length > 0)).toBe(true);

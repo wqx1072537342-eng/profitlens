@@ -16,7 +16,9 @@ export type EtsyUploadFileType =
   | "offsiteAds"
   | "shippingLabels"
   | "salesTax"
+  | "taxes"
   | "deposits"
+  | "cogs"
   | "unknown";
 
 export interface EtsyCsvUploadInput {
@@ -32,6 +34,7 @@ export interface EtsyCsvUploadAnalysis {
   fileTypeLabel: string;
   confidence: number;
   headers: string[];
+  rows: CsvRow[];
   previewRows: CsvRow[];
   rowCount: number;
   missingFields: string[];
@@ -97,6 +100,14 @@ const FILE_TYPE_RULES: readonly FileTypeRule[] = [
     moneyFields: ["Shipping Cost"],
   },
   {
+    fileType: "taxes",
+    label: "Taxes / VAT / GST",
+    requiredFields: ETSY_REQUIRED_FIELDS.taxes,
+    fileNameHints: ["tax", "taxes", "vat", "gst", "marketplace_collected_tax"],
+    dateFields: ["Date"],
+    moneyFields: ["Amount"],
+  },
+  {
     fileType: "salesTax",
     label: "Sales Tax",
     requiredFields: ETSY_REQUIRED_FIELDS.salesTax,
@@ -111,6 +122,14 @@ const FILE_TYPE_RULES: readonly FileTypeRule[] = [
     fileNameHints: ["deposit", "deposits"],
     dateFields: ["Deposit Date"],
     moneyFields: ["Gross Sales", "Refunds", "Fees", "Deposit Amount"],
+  },
+  {
+    fileType: "cogs",
+    label: "COGS",
+    requiredFields: ETSY_REQUIRED_FIELDS.cogs,
+    fileNameHints: ["cogs", "cost", "costs", "product_cost", "product_costs"],
+    dateFields: [],
+    moneyFields: ["Unit COGS", "Packaging Cost", "External Fulfillment Cost"],
   },
 ];
 
@@ -263,6 +282,7 @@ export function analyzeEtsyCsvUpload(
     fileTypeLabel: fileTypeLabel(fileType),
     confidence,
     headers: parsed.headers,
+    rows: parsed.rows,
     previewRows: parsed.rows.slice(0, 5),
     rowCount: parsed.rows.length,
     missingFields,

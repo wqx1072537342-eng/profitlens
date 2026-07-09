@@ -1,42 +1,24 @@
 "use server";
 
+import { redirect } from "next/navigation";
+
+import type { CsvRow, CsvWarning } from "@/lib/etsy-reconcile/types";
 import {
-  MAX_UPLOAD_FILE_SIZE_BYTES,
-  MAX_UPLOAD_FILES,
-} from "@/lib/csv-upload/analyzeEtsyCsvUpload";
-import type { CsvWarning } from "@/lib/etsy-reconcile/types";
-import { calculateUploadedReconciliation } from "@/lib/etsy-reconcile/uploadedReconciliation";
+  calculateUploadedReconciliationFromParsedRows,
+  type UploadedCsvType,
+  type UploadedParsedCsvInput,
+} from "@/lib/etsy-reconcile/uploadedReconciliation";
+import { analyzeBatchCompleteness } from "@/lib/reports/batchCompleteness";
 import { buildProfitPreviewSummary } from "@/lib/reports/buildProfitPreviewSummary";
+import { canDeleteReport, deleteReportRedirectPath } from "@/lib/reports/deleteReportPolicy";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Json } from "@/lib/supabase/types";
 
-import type {
-  GenerateProfitPreviewInput,
-  GenerateProfitPreviewResult,
-  ProfitPreviewCsvInput,
-} from "./types";
+import type { GenerateProfitPreviewInput, GenerateProfitPreviewResult } from "./types";
 
 function validatePreviewInput(input: GenerateProfitPreviewInput) {
   if (!input.uploadBatchId.trim()) {
     return "Upload batch is missing. Save CSV metadata before generating a preview.";
-  }
-
-  if (input.files.length === 0) {
-    return "Choose at least one CSV file before generating a preview.";
-  }
-
-  if (input.files.length > MAX_UPLOAD_FILES) {
-    return `Profit Preview can use at most ${MAX_UPLOAD_FILES} CSV files.`;
-  }
-
-  for (const file of input.files) {
-    if (!file.fileName.trim() || !file.fileName.toLowerCase().endsWith(".csv")) {
-      return "Every uploaded file must be a CSV file.";
-    }
-
-    if (Buffer.byteLength(file.text, "utf8") > MAX_UPLOAD_FILE_SIZE_BYTES) {
-      return `Each CSV file must be ${MAX_UPLOAD_FILE_SIZE_BYTES} bytes or smaller.`;
-    }
   }
 
   return null;
@@ -51,6 +33,47 @@ function serializeWarnings(warnings: readonly CsvWarning[]): Json {
     row: warning.row ?? null,
     value: warning.value ?? null,
   })) as Json;
+}
+
+function jsonToStringArray(value: Json): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is string => typeof item === "string");
+}
+
+function jsonToRows(value: Json): CsvRow[] {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .filter((item): item is Record<string, Json | undefined> => {
+      return Boolean(item) && typeof item === "object" && !Array.isArray(item);
+    })
+    .map((item) => {
+      const row: CsvRow = {};
+      for (const [key, fieldValue] of Object.entries(item)) {
+        row[key] = typeof fieldValue === "string" ? fieldValue : String(fieldValue ?? "");
+      }
+      return row;
+    });
+}
+
+function isUploadedCsvType(value: string): value is UploadedCsvType {
+  return [
+    "orders",
+    "refunds",
+    "fees",
+    "ads",
+    "offsiteAds",
+    "shippingLabels",
+    "salesTax",
+    "deposits",
+    "reserves",
+    "chargebacks",
+    "taxes",
+    "feeAdjustments",
+    "cogs",
+    "bankStatements",
+    "unknown",
+  ].includes(value);
 }
 
 export async function generateProfitPreviewAction(
@@ -99,21 +122,53 @@ export async function generateProfitPreviewAction(
     };
   }
 
+  const { data: uploads, error: uploadsError } = await supabase
+    .from("uploads")
+    .select("file_name,file_type,headers_json,rows_json")
+    .eq("upload_batch_id", batch.id)
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: true });
+
+  if (uploadsError || !uploads) {
+    return {
+      message: uploadsError?.message ?? "Could not load uploaded CSV rows.",
+      status: "error",
+    };
+  }
+
+  if (uploads.length === 0) {
+    return {
+      message: "Upload at least one Etsy CSV before generating a Profit Preview.",
+      status: "error",
+    };
+  }
+
   try {
-    const reconciliation = await calculateUploadedReconciliation(
-      input.files.map((file): ProfitPreviewCsvInput => ({
-        fileName: file.fileName,
-        text: file.text,
-      })),
+    const parsedUploads: UploadedParsedCsvInput[] = uploads.map((upload) => ({
+      fileName: upload.file_name,
+      fileType: isUploadedCsvType(upload.file_type) ? upload.file_type : "unknown",
+      headers: jsonToStringArray(upload.headers_json),
+      rows: jsonToRows(upload.rows_json),
+    }));
+    const completeness = analyzeBatchCompleteness(
+      parsedUploads.map((upload) => upload.fileType),
     );
+    const reconciliation =
+      await calculateUploadedReconciliationFromParsedRows(parsedUploads);
     const summary = buildProfitPreviewSummary(reconciliation.report);
+    const warnings = [...summary.warnings, ...completeness.warnings];
     const { data: report, error: reportError } = await supabase
       .from("reports")
       .insert({
         ads: summary.ads,
+        completeness_status: completeness.status,
         currency: summary.currency,
         fees: summary.fees,
         gross_sales: summary.grossSales,
+        included_file_types_json: completeness.includedFileTypes as unknown as Json,
+        missing_file_types_json: completeness.missingFileTypes.map(
+          (fileType) => fileType.fileType,
+        ) as unknown as Json,
         net_profit_after_cogs: summary.netProfitAfterCOGS,
         net_profit_before_cogs: summary.netProfitBeforeCOGS,
         refunds: summary.refunds,
@@ -122,7 +177,7 @@ export async function generateProfitPreviewAction(
         tax_collected: summary.taxCollected,
         upload_batch_id: batch.id,
         user_id: user.id,
-        warnings_json: serializeWarnings(summary.warnings),
+        warnings_json: serializeWarnings(warnings),
       })
       .select("id")
       .single();
@@ -135,10 +190,15 @@ export async function generateProfitPreviewAction(
     }
 
     return {
-      message: "Profit Preview generated.",
+      completenessStatus: completeness.status,
+      message:
+        completeness.status === "complete"
+          ? "Profit Preview generated from a complete core CSV set."
+          : "Profit Preview generated with missing file warnings.",
+      missingFileTypes: completeness.missingFileTypes.map((fileType) => fileType.fileType),
       reportId: report.id,
       status: "success",
-      warnings: summary.warnings,
+      warnings,
     };
   } catch (error) {
     return {
@@ -149,4 +209,38 @@ export async function generateProfitPreviewAction(
       status: "error",
     };
   }
+}
+
+export async function deleteReportAction(formData: FormData) {
+  const reportId = String(formData.get("reportId") ?? "").trim();
+
+  if (!reportId) {
+    redirect(deleteReportRedirectPath());
+  }
+
+  const supabase = await createSupabaseServerClient();
+
+  if (!supabase) {
+    redirect("/login");
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const { data: report } = await supabase
+    .from("reports")
+    .select("id,user_id")
+    .eq("id", reportId)
+    .single();
+
+  if (canDeleteReport({ currentUserId: user.id, reportUserId: report?.user_id })) {
+    await supabase.from("reports").delete().eq("id", reportId).eq("user_id", user.id);
+  }
+
+  redirect(deleteReportRedirectPath());
 }

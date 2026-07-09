@@ -42,6 +42,21 @@ ProfitLens gives Etsy sellers a fast way to:
 - Export a report for CPA review.
 - Avoid spending hours manually organizing spreadsheets.
 
+## Approved SaaS Positioning
+
+ProfitLens should look and feel like a professional SaaS product, but its real product promise remains narrow:
+
+> Upload official Etsy CSV files, understand true profit, and download a CPA-ready report.
+
+The professional SaaS upgrade is intended to improve:
+
+- Trust: sellers are more comfortable uploading financial CSV files.
+- Activation: new users understand the next step after signup.
+- Retention: users can return to reports, downloads, settings, and account pages.
+- Conversion learning: pricing and billing pages can test paid interest without forcing payment.
+
+Shopify, Amazon, and AI may be used as Coming Soon positioning only. They should not be treated as supported products until the Etsy workflow proves demand.
+
 ## Pricing
 
 Default MVP pricing:
@@ -53,12 +68,49 @@ Default MVP pricing:
 Future pricing experiments after usage validation:
 
 - $19 one-time Etsy annual profit report.
-- $49/year for single-shop access.
-- $99/year for multi-report or multi-shop access.
+- $19/month Pro plan.
+- $49/year single-shop annual plan.
+- $99/year multi-report or multi-shop access.
 
 MVP should start with the simplest free path:
 
 > Free upload, free preview, free Excel / PDF download.
+
+### Pricing Page Strategy
+
+Pricing should be shown before real payment is added:
+
+Free Beta:
+
+- $0/month.
+- Etsy CSV upload.
+- Profit Preview.
+- Report history.
+- Excel download.
+- Missing file warnings.
+- CTA: Start Free.
+
+One-Time Report:
+
+- $19/report.
+- Coming Soon.
+- CPA-ready annual report.
+- Excel and PDF.
+- Priority report formatting.
+- CTA: Notify Me.
+
+Pro:
+
+- $19/month.
+- Coming Soon.
+- Unlimited reports.
+- Advanced report formatting.
+- Product-level profit analysis.
+- Saved COGS templates.
+- Future AI insights.
+- CTA: Join Waitlist.
+
+The pricing page should support paid-intent learning, not force payment in the default MVP flow.
 
 ## Revenue Goal
 
@@ -89,3 +141,17 @@ Day 61-90:
 - Get first paid users.
 - Improve onboarding and export quality.
 - Decide whether to introduce a $19 one-time report, premium export, or subscription.
+
+## Feedback Strategy
+
+Customer feedback should be treated as a revenue discovery channel.
+
+The app should ask users:
+
+- What blocked you from finishing your Etsy report?
+- Which Etsy CSV file was hard to find?
+- Which number looked wrong?
+- Would you pay for a CPA-ready report?
+- Do you need PDF, better Excel formatting, or product-level profit?
+
+MVP feedback can start with a mailto link or simple feedback page. A database-backed feedback table can be added when feedback volume justifies it.

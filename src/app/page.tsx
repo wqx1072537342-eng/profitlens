@@ -23,15 +23,26 @@ const workflow = [
   "Download report",
 ];
 
+const sampleMetrics = [
+  ["Gross Sales", "$12,480"],
+  ["Etsy Fees", "-$1,240"],
+  ["Shipping Labels", "-$860"],
+  ["Tax Collected", "$940"],
+  ["Profit Before COGS", "$7,920"],
+];
+
 export default function Page() {
   return (
     <main className="min-h-screen bg-stone-100 text-slate-950">
       <header className="border-b border-stone-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           <Link className="text-lg font-black" href="/">
-            ProfitLens
+            Etsy Profit Report by ProfitLens
           </Link>
           <nav className="flex items-center gap-3 text-sm font-semibold">
+            <Link className="text-slate-600 transition hover:text-slate-950" href="/pricing">
+              Pricing
+            </Link>
             <Link className="text-slate-600 transition hover:text-slate-950" href="/login">
               Log in
             </Link>
@@ -48,10 +59,10 @@ export default function Page() {
       <section className="mx-auto grid min-h-[calc(100vh-73px)] max-w-6xl items-center gap-10 px-5 py-14 lg:grid-cols-[1.05fr_0.95fr]">
         <div>
           <p className="text-sm font-bold uppercase text-teal-800">
-            Etsy profit reporting
+            Etsy Profit Report by ProfitLens
           </p>
           <h1 className="mt-4 max-w-3xl text-5xl font-black leading-tight md:text-6xl">
-            Upload Etsy CSV, get a CPA-ready profit report.
+            Upload Etsy CSV files and get a CPA-ready profit report.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
             ProfitLens helps small Etsy sellers turn official CSV exports into a
@@ -61,15 +72,15 @@ export default function Page() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               className="rounded-md bg-teal-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-teal-800"
-              href="/signup"
+              href="/upload"
             >
-              Start with an account
+              Upload Etsy CSV
             </Link>
             <Link
               className="rounded-md border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-800 transition hover:bg-slate-50"
-              href="/login"
+              href="#sample-report"
             >
-              Log in
+              View sample report
             </Link>
           </div>
           <div className="mt-6 flex flex-wrap gap-2 text-sm font-semibold text-teal-900">
@@ -87,13 +98,13 @@ export default function Page() {
 
         <aside className="rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
           <p className="text-sm font-bold uppercase text-slate-500">Report package</p>
-          <h2 className="mt-2 text-3xl font-black">ProfitLens for Etsy</h2>
+          <h2 className="mt-2 text-3xl font-black">Etsy Profit Report</h2>
           <div className="mt-6 grid gap-3">
             {[
               ["Revenue", "Orders CSV and shipping charged to buyers"],
               ["Deductions", "Refunds, Etsy fees, ads, labels, and adjustments"],
               ["Tax notes", "Sales Tax / VAT / GST shown outside profit"],
-              ["CPA handoff", "Excel / PDF report planned for MVP export"],
+              ["CPA handoff", "Download a multi-sheet .xlsx workbook"],
             ].map(([label, body]) => (
               <div className="rounded-md border border-stone-200 p-4" key={label}>
                 <strong className="block text-slate-950">{label}</strong>
@@ -104,10 +115,38 @@ export default function Page() {
             ))}
           </div>
           <p className="mt-5 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm leading-6 text-amber-950">
-            Current build is the formal project foundation. CSV upload and report
-            generation are the next sprint.
+            Built for bookkeeping preparation and CPA review. This is not tax,
+            legal, or accounting advice.
           </p>
         </aside>
+      </section>
+
+      <section className="border-y border-stone-200 bg-white" id="sample-report">
+        <div className="mx-auto grid max-w-6xl gap-6 px-5 py-12 lg:grid-cols-[0.85fr_1.15fr]">
+          <div>
+            <p className="text-sm font-bold uppercase text-teal-800">Sample report</p>
+            <h2 className="mt-2 text-3xl font-black">See the report shape before uploading</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              A ProfitLens report separates seller revenue, platform expenses, shipping
+              labels, marketplace-collected tax, optional COGS, and warnings so you can
+              review the numbers before sending them to a CPA.
+            </p>
+          </div>
+          <div className="rounded-lg border border-stone-200 bg-stone-50 p-5">
+            <div className="grid gap-3 sm:grid-cols-2">
+              {sampleMetrics.map(([label, value]) => (
+                <div className="rounded-md border border-stone-200 bg-white p-4" key={label}>
+                  <p className="text-sm font-semibold text-slate-500">{label}</p>
+                  <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
+              Sample numbers are illustrative. Your report is generated only from the
+              CSV files you upload.
+            </p>
+          </div>
+        </div>
       </section>
 
       <section className="border-y border-stone-200 bg-white">

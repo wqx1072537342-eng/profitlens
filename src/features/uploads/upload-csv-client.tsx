@@ -4,19 +4,55 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 
 import { generateProfitPreviewAction } from "@/features/reports/actions";
-import type {
-  GenerateProfitPreviewResult,
-  ProfitPreviewCsvInput,
-} from "@/features/reports/types";
+import type { GenerateProfitPreviewResult } from "@/features/reports/types";
 import {
   analyzeEtsyCsvUpload,
   MAX_UPLOAD_FILE_SIZE_BYTES,
   MAX_UPLOAD_FILES,
   type EtsyCsvUploadAnalysis,
 } from "@/lib/csv-upload/analyzeEtsyCsvUpload";
+import {
+  analyzeBatchCompleteness,
+  completenessLabel,
+} from "@/lib/reports/batchCompleteness";
 
 import { saveUploadBatchAction } from "./actions";
-import type { SaveUploadBatchResult, UploadFileMetadata } from "./types";
+import type {
+  SaveUploadBatchResult,
+  UploadFileMetadata,
+  UploadWorkspaceBatch,
+} from "./types";
+
+const etsyCsvGuide = [
+  {
+    file: "Orders CSV",
+    purpose: "Provides gross sales, buyer shipping charged, discounts, order status, and sales tax shown on order rows.",
+  },
+  {
+    file: "Fees / Payment account CSV",
+    purpose: "Captures Etsy transaction fees, payment processing fees, listing fees, credits, and other platform expenses.",
+  },
+  {
+    file: "Refunds CSV",
+    purpose: "Reduces sales and profit for refunded orders, cases, and related adjustments.",
+  },
+  {
+    file: "Shipping Labels CSV",
+    purpose: "Adds Etsy shipping label costs so shipping expenses are not missing from profit.",
+  },
+  {
+    file: "Sales Tax / VAT / GST CSV",
+    purpose: "Shows marketplace-collected tax separately so tax does not inflate seller revenue.",
+  },
+  {
+    file: "Deposits CSV",
+    purpose: "Helps compare Etsy payment deposits against calculated cash flow and report completeness.",
+  },
+  {
+    file: "Optional COGS CSV",
+    purpose: "Adds product cost, packaging cost, and fulfillment cost for Net Profit After COGS.",
+  },
+];
 
 function formatBytes(value: number) {
   if (value < 1024) return `${value} B`;
@@ -30,12 +66,17 @@ function warningLabel(count: number) {
   return `${count} warnings`;
 }
 
+function isCsvFile(file: File) {
+  return file.name.toLowerCase().endsWith(".csv");
+}
+
 function toUploadMetadata(analysis: EtsyCsvUploadAnalysis): UploadFileMetadata {
   return {
     fileName: analysis.fileName,
     fileSizeBytes: analysis.fileSizeBytes,
     fileType: analysis.fileType,
     headers: analysis.headers,
+    rows: analysis.rows,
     previewRows: analysis.previewRows,
     rowCount: analysis.rowCount,
     warnings: analysis.warnings,
@@ -43,13 +84,16 @@ function toUploadMetadata(analysis: EtsyCsvUploadAnalysis): UploadFileMetadata {
 }
 
 interface UploadCsvClientProps {
+  initialWorkspace: UploadWorkspaceBatch | null;
   userEmail: string;
 }
 
-export function UploadCsvClient({ userEmail }: UploadCsvClientProps) {
+export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClientProps) {
   const router = useRouter();
   const [analyses, setAnalyses] = useState<EtsyCsvUploadAnalysis[]>([]);
-  const [csvInputs, setCsvInputs] = useState<ProfitPreviewCsvInput[]>([]);
+  const [workspace, setWorkspace] = useState<UploadWorkspaceBatch | null>(
+    initialWorkspace,
+  );
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const [saveResult, setSaveResult] = useState<SaveUploadBatchResult | null>(null);
   const [previewResult, setPreviewResult] =
@@ -59,6 +103,10 @@ export function UploadCsvClient({ userEmail }: UploadCsvClientProps) {
   const warningCount = useMemo(
     () => analyses.reduce((sum, analysis) => sum + analysis.warnings.length, 0),
     [analyses],
+  );
+  const completeness = useMemo(
+    () => analyzeBatchCompleteness(workspace?.files.map((file) => file.fileType) ?? []),
+    [workspace],
   );
 
   async function handleFiles(files: FileList | null) {
@@ -70,7 +118,6 @@ export function UploadCsvClient({ userEmail }: UploadCsvClientProps) {
 
     if (selectedFiles.length === 0) {
       setAnalyses([]);
-      setCsvInputs([]);
       setErrorMessages([]);
       return;
     }
@@ -80,13 +127,10 @@ export function UploadCsvClient({ userEmail }: UploadCsvClientProps) {
     }
 
     for (const file of selectedFiles) {
-      const isCsv =
-        file.name.toLowerCase().endsWith(".csv") ||
-        file.type === "text/csv" ||
-        file.type === "application/vnd.ms-excel";
-
-      if (!isCsv) {
-        nextErrors.push(`${file.name} is not a CSV file.`);
+      if (!isCsvFile(file)) {
+        nextErrors.push(
+          `${file.name} is not supported. Export your Etsy data as CSV before uploading.`,
+        );
       }
 
       if (file.size > MAX_UPLOAD_FILE_SIZE_BYTES) {
@@ -100,7 +144,6 @@ export function UploadCsvClient({ userEmail }: UploadCsvClientProps) {
 
     if (nextErrors.length > 0) {
       setAnalyses([]);
-      setCsvInputs([]);
       setErrorMessages(nextErrors);
       return;
     }
@@ -120,37 +163,33 @@ export function UploadCsvClient({ userEmail }: UploadCsvClientProps) {
     );
 
     setAnalyses(nextAnalyses);
-    setCsvInputs(nextCsvInputs);
     setErrorMessages([]);
 
     startSaveTransition(() => {
-      void saveUploadBatchAction(nextAnalyses.map(toUploadMetadata)).then(setSaveResult);
+      void saveUploadBatchAction({
+        files: nextAnalyses.map(toUploadMetadata),
+        uploadBatchId: workspace?.batchId,
+      }).then((result) => {
+        setSaveResult(result);
+        if (result.status === "success") {
+          setWorkspace(result.workspace);
+        }
+      });
     });
   }
 
   function handleGeneratePreview() {
-    if (saveResult?.status !== "success" || !saveResult.batchId) {
+    if (!workspace || workspace.files.length === 0) {
       setPreviewResult({
-        message: "Wait for upload metadata to save before generating a preview.",
+        message: "Upload at least one Etsy CSV before generating a preview.",
         status: "error",
       });
       return;
     }
-
-    if (csvInputs.length === 0) {
-      setPreviewResult({
-        message: "Select CSV files again before generating a preview.",
-        status: "error",
-      });
-      return;
-    }
-
-    const uploadBatchId = saveResult.batchId;
 
     startGenerateTransition(() => {
       void generateProfitPreviewAction({
-        files: csvInputs,
-        uploadBatchId,
+        uploadBatchId: workspace.batchId,
       }).then((result) => {
         setPreviewResult(result);
         if (result.status === "success") {
@@ -158,6 +197,14 @@ export function UploadCsvClient({ userEmail }: UploadCsvClientProps) {
         }
       });
     });
+  }
+
+  function handleStartNewBatch() {
+    setAnalyses([]);
+    setWorkspace(null);
+    setSaveResult(null);
+    setPreviewResult(null);
+    setErrorMessages([]);
   }
 
   return (
@@ -172,41 +219,80 @@ export function UploadCsvClient({ userEmail }: UploadCsvClientProps) {
               Upload Etsy CSV files
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-              Signed in as <span className="font-semibold">{userEmail}</span>. Choose
-              official Etsy CSV exports to identify file types, review warnings, and
-              generate a basic profit preview for bookkeeping preparation.
+              Signed in as <span className="font-semibold">{userEmail}</span>. Upload
+              one CSV or select multiple official Etsy CSV exports at once. ProfitLens
+              groups them into one report batch and tells you what is still missing.
             </p>
           </div>
           <div className="rounded-md border border-teal-200 bg-teal-50 px-3 py-2 text-sm font-semibold text-teal-900">
-            No Stripe, no Etsy API, no raw CSV storage.
+            CSV only. Excel .xlsx/.xls files are not part of this MVP.
           </div>
         </div>
       </section>
 
       <section className="grid gap-4 rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-teal-800">
+            How to export Etsy CSV files
+          </p>
+          <h2 className="mt-2 text-2xl font-black text-slate-950">
+            Prepare the CSV files that affect your report
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+            In Etsy, export official CSV reports for the same tax year or reporting
+            period. You can upload one file first and add missing files later; ProfitLens
+            will keep them grouped in the same report batch.
+          </p>
+        </div>
+        <div className="grid gap-3 md:grid-cols-2">
+          {etsyCsvGuide.map((item) => (
+            <div className="rounded-md border border-stone-200 bg-stone-50 p-4" key={item.file}>
+              <p className="text-sm font-black text-slate-950">{item.file}</p>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{item.purpose}</p>
+            </div>
+          ))}
+        </div>
+        <p className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950">
+          ProfitLens does not connect to your Etsy account. It only reads the CSV files
+          you choose to upload.
+        </p>
+      </section>
+
+      <section className="grid gap-4 rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="text-2xl font-black text-slate-950">Choose CSV files</h2>
+            <h2 className="text-2xl font-black text-slate-950">
+              Choose one or more CSV files
+            </h2>
             <p className="mt-2 text-sm leading-6 text-slate-600">
               Up to {MAX_UPLOAD_FILES} files, {formatBytes(MAX_UPLOAD_FILE_SIZE_BYTES)}{" "}
               max each. Supported: orders, refunds, fees, ads, offsite ads, shipping
-              labels, sales tax, and deposits. The selected CSV content is used only
-              to generate the preview and is not stored.
+              labels, sales tax, and deposits. Excel workbooks are not accepted yet;
+              export from Etsy as CSV first.
             </p>
           </div>
-          <label className="inline-flex cursor-pointer items-center justify-center rounded-md bg-teal-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-teal-800">
-            Select CSV files
-            <input
-              accept=".csv,text/csv"
-              className="sr-only"
-              multiple
-              onChange={(event) => {
-                void handleFiles(event.currentTarget.files);
-                event.currentTarget.value = "";
-              }}
-              type="file"
-            />
-          </label>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button
+              className="inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
+              onClick={handleStartNewBatch}
+              type="button"
+            >
+              Start new batch
+            </button>
+            <label className="inline-flex cursor-pointer items-center justify-center rounded-md bg-teal-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-teal-800">
+              Select CSV files
+              <input
+                accept=".csv,text/csv"
+                className="sr-only"
+                multiple
+                onChange={(event) => {
+                  void handleFiles(event.currentTarget.files);
+                  event.currentTarget.value = "";
+                }}
+                type="file"
+              />
+            </label>
+          </div>
         </div>
 
         {errorMessages.length > 0 ? (
@@ -227,7 +313,7 @@ export function UploadCsvClient({ userEmail }: UploadCsvClientProps) {
           >
             <p className="font-semibold">{saveResult.message}</p>
             {saveResult.batchId ? (
-              <p className="mt-1 text-xs">Upload batch: {saveResult.batchId}</p>
+              <p className="mt-1 text-xs">Report batch: {saveResult.batchId}</p>
             ) : null}
           </div>
         ) : null}
@@ -238,30 +324,100 @@ export function UploadCsvClient({ userEmail }: UploadCsvClientProps) {
           </p>
         ) : null}
 
-        {analyses.length > 0 ? (
-          <div className="flex flex-col gap-3 rounded-md border border-stone-200 bg-stone-50 p-4 md:flex-row md:items-center md:justify-between">
+        <div className="grid gap-4 rounded-md border border-stone-200 bg-stone-50 p-4">
+          <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
             <div>
-              <h3 className="text-lg font-black text-slate-950">
-                Generate Profit Preview
+              <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                Report Batch Workspace
+              </p>
+              <h3 className="mt-2 text-xl font-black text-slate-950">
+                {workspace ? completenessLabel(completeness.status) : "No active batch"}
               </h3>
               <p className="mt-1 text-sm leading-6 text-slate-600">
-                This creates a saved report summary from the current upload batch.
-                This is bookkeeping preparation, not tax advice.
+                {workspace
+                  ? `${workspace.files.length} uploaded file${
+                      workspace.files.length === 1 ? "" : "s"
+                    } in this batch. Missing files do not block analysis, but the report will be marked accordingly.`
+                  : "Add CSV files to create a new report batch."}
               </p>
             </div>
             <button
               className="rounded-md bg-slate-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
-              disabled={
-                isSaving ||
-                isGenerating ||
-                saveResult?.status !== "success" ||
-                !saveResult.batchId
-              }
+              disabled={!workspace || workspace.files.length === 0 || isGenerating}
               onClick={handleGeneratePreview}
               type="button"
             >
               {isGenerating ? "Generating..." : "Generate Preview"}
             </button>
+          </div>
+
+          {workspace ? (
+            <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
+              <div className="rounded-md border border-stone-200 bg-white p-4">
+                <h4 className="text-sm font-black uppercase text-slate-500">
+                  Uploaded files
+                </h4>
+                {workspace.files.length === 0 ? (
+                  <p className="mt-3 text-sm text-slate-600">No files uploaded yet.</p>
+                ) : (
+                  <div className="mt-3 grid gap-2">
+                    {workspace.files.map((file) => (
+                      <div
+                        className="rounded-md border border-stone-200 px-3 py-2 text-sm"
+                        key={file.id ?? `${file.fileName}-${file.fileSizeBytes}`}
+                      >
+                        <p className="font-bold text-slate-950">{file.fileName}</p>
+                        <p className="mt-1 text-xs text-slate-600">
+                          {file.fileType} / {formatBytes(file.fileSizeBytes)} /{" "}
+                          {file.rowCount} rows / {warningLabel(file.warningCount)}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="rounded-md border border-stone-200 bg-white p-4">
+                <h4 className="text-sm font-black uppercase text-slate-500">
+                  Missing file checklist
+                </h4>
+                {completeness.missingFileTypes.length === 0 ? (
+                  <p className="mt-3 rounded-md border border-teal-200 bg-teal-50 px-3 py-2 text-sm font-semibold text-teal-950">
+                    Core Etsy CSV set is complete.
+                  </p>
+                ) : (
+                  <div className="mt-3 grid gap-2">
+                    {completeness.missingFileTypes.map((missing) => (
+                      <div
+                        className={`rounded-md border px-3 py-2 text-sm ${
+                          missing.required
+                            ? "border-amber-200 bg-amber-50 text-amber-950"
+                            : "border-slate-200 bg-slate-50 text-slate-700"
+                        }`}
+                        key={missing.fileType}
+                      >
+                        <p className="font-bold">{missing.label}</p>
+                        <p className="mt-1 text-xs leading-5">{missing.impact}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : null}
+        </div>
+
+        {analyses.length > 0 ? (
+          <div className="flex flex-col gap-3 rounded-md border border-stone-200 bg-stone-50 p-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h3 className="text-lg font-black text-slate-950">
+                Latest upload review
+              </h3>
+              <p className="mt-1 text-sm leading-6 text-slate-600">
+                Review the files you just added. The batch workspace above contains
+                all files that will be analyzed together.
+              </p>
+            </div>
           </div>
         ) : null}
 
