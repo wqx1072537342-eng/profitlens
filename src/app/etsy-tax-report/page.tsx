@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { PublicFooter } from "@/features/marketing/public-site";
 import { absoluteUrl, faqJsonLd } from "@/lib/seo/site";
 
 const faqs = [
@@ -188,6 +189,7 @@ export default function EtsyTaxReportPage() {
           </p>
         </div>
       </section>
+      <PublicFooter />
     </main>
   );
 }

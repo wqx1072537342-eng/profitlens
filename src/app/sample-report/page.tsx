@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { PublicFooter } from "@/features/marketing/public-site";
 import { absoluteUrl, faqJsonLd } from "@/lib/seo/site";
 
 const summaryRows = [
@@ -193,6 +194,7 @@ export default function SampleReportPage() {
           </div>
         </div>
       </section>
+      <PublicFooter />
     </main>
   );
 }

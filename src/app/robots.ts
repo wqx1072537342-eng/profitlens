@@ -7,10 +7,13 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       allow: [
         "/",
+        "/contact",
         "/pricing",
+        "/privacy",
         "/etsy-profit-report",
         "/etsy-tax-report",
         "/sample-report",
+        "/terms",
       ],
       disallow: [
         "/account",

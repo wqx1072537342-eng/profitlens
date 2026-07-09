@@ -47,6 +47,21 @@ export const publicRoutes = [
     path: "/pricing",
     priority: 0.75,
   },
+  {
+    changeFrequency: "yearly" as const,
+    path: "/privacy",
+    priority: 0.4,
+  },
+  {
+    changeFrequency: "yearly" as const,
+    path: "/terms",
+    priority: 0.4,
+  },
+  {
+    changeFrequency: "monthly" as const,
+    path: "/contact",
+    priority: 0.5,
+  },
 ];
 
 export function organizationJsonLd() {
