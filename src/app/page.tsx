@@ -78,7 +78,7 @@ export default function Page() {
             </Link>
             <Link
               className="rounded-md border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-800 transition hover:bg-slate-50"
-              href="#sample-report"
+              href="/sample-report"
             >
               View sample report
             </Link>
@@ -131,6 +131,12 @@ export default function Page() {
               labels, marketplace-collected tax, optional COGS, and warnings so you can
               review the numbers before sending them to a CPA.
             </p>
+            <Link
+              className="mt-5 inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-800 transition hover:bg-slate-50"
+              href="/sample-report"
+            >
+              Open full sample report
+            </Link>
           </div>
           <div className="rounded-lg border border-stone-200 bg-stone-50 p-5">
             <div className="grid gap-3 sm:grid-cols-2">
@@ -145,6 +151,45 @@ export default function Page() {
               Sample numbers are illustrative. Your report is generated only from the
               CSV files you upload.
             </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-5 py-12">
+        <div className="rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
+          <p className="text-sm font-bold uppercase tracking-wide text-slate-500">
+            Etsy seller resources
+          </p>
+          <h2 className="mt-2 text-3xl font-black">Prepare your Etsy profit report</h2>
+          <div className="mt-5 grid gap-3 md:grid-cols-3">
+            {[
+              [
+                "/etsy-profit-report",
+                "Etsy Profit Report",
+                "Turn Etsy CSV exports into a CPA-ready profit report.",
+              ],
+              [
+                "/etsy-tax-report",
+                "Etsy Tax Report",
+                "Prepare year-end bookkeeping numbers before CPA review.",
+              ],
+              [
+                "/sample-report",
+                "Sample Report",
+                "Preview the report structure before uploading CSV files.",
+              ],
+            ].map(([href, title, body]) => (
+              <Link
+                className="rounded-md border border-stone-200 bg-stone-50 p-4 transition hover:bg-white"
+                href={href}
+                key={href}
+              >
+                <strong className="block text-slate-950">{title}</strong>
+                <span className="mt-2 block text-sm leading-6 text-slate-600">
+                  {body}
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

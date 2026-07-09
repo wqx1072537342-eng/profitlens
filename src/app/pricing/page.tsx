@@ -1,4 +1,29 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+import { absoluteUrl } from "@/lib/seo/site";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: absoluteUrl("/pricing"),
+  },
+  description:
+    "ProfitLens pricing for Etsy sellers. Start with the free beta for Etsy CSV Profit Preview and Excel report downloads. Paid report and Pro plans are coming soon.",
+  openGraph: {
+    description:
+      "Start free with ProfitLens beta for Etsy CSV Profit Preview and Excel report downloads.",
+    title: "ProfitLens Pricing",
+    type: "website",
+    url: absoluteUrl("/pricing"),
+  },
+  title: "ProfitLens Pricing",
+  twitter: {
+    card: "summary_large_image",
+    description:
+      "Start free with ProfitLens beta for Etsy CSV Profit Preview and Excel report downloads.",
+    title: "ProfitLens Pricing",
+  },
+};
 
 const plans = [
   {
@@ -149,6 +174,45 @@ export default function PricingPage() {
             help users upload files, review warnings, generate a report, and tell us
             what would make it worth paying for.
           </p>
+        </section>
+
+        <section className="mt-6 rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
+          <p className="text-sm font-bold uppercase tracking-wide text-slate-500">
+            Before you choose
+          </p>
+          <h2 className="mt-2 text-2xl font-black text-slate-950">
+            See what the Etsy CSV report includes
+          </h2>
+          <div className="mt-5 grid gap-3 md:grid-cols-3">
+            {[
+              [
+                "/etsy-profit-report",
+                "Etsy Profit Report",
+                "Review the CPA-ready profit report workflow.",
+              ],
+              [
+                "/etsy-tax-report",
+                "Etsy Tax Report",
+                "Understand tax-season bookkeeping preparation.",
+              ],
+              [
+                "/sample-report",
+                "Sample Report",
+                "Preview the report format and source notes.",
+              ],
+            ].map(([href, title, body]) => (
+              <Link
+                className="rounded-md border border-stone-200 bg-stone-50 p-4 transition hover:bg-white"
+                href={href}
+                key={href}
+              >
+                <strong className="block text-slate-950">{title}</strong>
+                <span className="mt-2 block text-sm leading-6 text-slate-600">
+                  {body}
+                </span>
+              </Link>
+            ))}
+          </div>
         </section>
       </section>
     </main>
