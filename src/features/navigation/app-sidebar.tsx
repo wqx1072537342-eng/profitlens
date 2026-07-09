@@ -15,14 +15,23 @@ const primaryNavigation = [
   { href: "/feedback", label: "Feedback", shortLabel: "Feedback" },
 ];
 
+const adminNavigation = [{ href: "/admin", label: "Admin", shortLabel: "Admin" }];
+
 const comingSoonNavigation = ["AI Insights", "Shopify", "Amazon"];
 
 function isActivePath(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function AppSidebar({ email }: { email?: string | null }) {
+export function AppSidebar({
+  email,
+  isAdmin = false,
+}: {
+  email?: string | null;
+  isAdmin?: boolean;
+}) {
   const pathname = usePathname();
+  const navigation = isAdmin ? [...primaryNavigation, ...adminNavigation] : primaryNavigation;
 
   return (
     <>
@@ -42,7 +51,7 @@ export function AppSidebar({ email }: { email?: string | null }) {
               Workspace
             </p>
             <div className="mt-3 grid gap-1">
-              {primaryNavigation.map((item) => {
+              {navigation.map((item) => {
                 const isActive = isActivePath(pathname, item.href);
                 return (
                   <Link
@@ -103,7 +112,7 @@ export function AppSidebar({ email }: { email?: string | null }) {
           <AccountMenu email={email} />
         </div>
         <nav className="flex gap-2 overflow-x-auto border-t border-stone-100 px-4 py-2">
-          {primaryNavigation.map((item) => {
+          {navigation.map((item) => {
             const isActive = isActivePath(pathname, item.href);
             return (
               <Link
