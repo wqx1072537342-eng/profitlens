@@ -8,7 +8,6 @@ const protectedRoutes = [
   "/admin",
   "/dashboard",
   "/data-import",
-  "/upload",
   "/reports",
   "/billing",
   "/account",
