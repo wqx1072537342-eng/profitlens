@@ -4,10 +4,20 @@ import { useEffect, useRef, useState } from "react";
 
 import { signOutAction } from "@/features/auth/actions";
 
-export function AccountMenu({ email }: { email?: string | null }) {
+export function AccountMenu({
+  email,
+  fullWidth = false,
+  placement = "bottom",
+}: {
+  email?: string | null;
+  fullWidth?: boolean;
+  placement?: "bottom" | "top";
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const accountLabel = email ? email.split("@")[0] : "Account";
+  const menuPosition =
+    placement === "top" ? "bottom-full mb-2" : "top-full mt-2";
 
   useEffect(() => {
     function handlePointerDown(event: MouseEvent) {
@@ -21,11 +31,13 @@ export function AccountMenu({ email }: { email?: string | null }) {
   }, []);
 
   return (
-    <div className="relative" ref={menuRef}>
+    <div className={fullWidth ? "relative w-full" : "relative"} ref={menuRef}>
       <button
         aria-expanded={isOpen}
         aria-haspopup="menu"
-        className="inline-flex max-w-[220px] items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+        className={`inline-flex items-center justify-between gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 ${
+          fullWidth ? "w-full" : "max-w-[220px]"
+        }`}
         onClick={() => setIsOpen((current) => !current)}
         type="button"
       >
@@ -37,7 +49,7 @@ export function AccountMenu({ email }: { email?: string | null }) {
 
       {isOpen ? (
         <div
-          className="absolute right-0 z-30 mt-2 w-72 overflow-hidden rounded-md border border-stone-200 bg-white shadow-lg"
+          className={`absolute right-0 z-30 w-72 overflow-hidden rounded-md border border-stone-200 bg-white shadow-lg ${menuPosition}`}
           role="menu"
         >
           <div className="border-b border-stone-200 px-4 py-3">
@@ -50,7 +62,7 @@ export function AccountMenu({ email }: { email?: string | null }) {
           </div>
           <form action={signOutAction}>
             <button
-              className="block w-full px-4 py-3 text-left text-sm font-semibold text-rose-700 transition hover:bg-rose-50"
+              className="block w-full px-4 py-3 text-left text-sm font-bold text-rose-700 transition hover:bg-rose-50"
               role="menuitem"
               type="submit"
             >

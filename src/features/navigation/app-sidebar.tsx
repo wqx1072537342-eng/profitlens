@@ -100,7 +100,7 @@ export function AppSidebar({
               CSV preview, Profit Preview, and Excel download are currently free.
             </p>
           </div>
-          <AccountMenu email={email} />
+          <AccountMenu email={email} fullWidth placement="top" />
         </div>
       </aside>
 
