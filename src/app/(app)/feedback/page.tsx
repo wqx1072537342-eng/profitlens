@@ -1,6 +1,5 @@
-import { redirect } from "next/navigation";
-
 import { getCurrentUser } from "@/features/auth/session";
+import { FeedbackForm } from "@/features/submissions/feedback-form";
 
 export const dynamic = "force-dynamic";
 
@@ -16,8 +15,12 @@ const feedbackTopics = [
 export default async function FeedbackPage() {
   const { isConfigured, user } = await getCurrentUser();
 
-  if (!isConfigured || !user) {
-    redirect("/login");
+  if (!isConfigured) {
+    return (
+      <div className="rounded-lg border border-amber-200 bg-amber-50 p-6 text-amber-950">
+        Supabase is not configured yet. Feedback saving is unavailable.
+      </div>
+    );
   }
 
   return (
@@ -36,58 +39,10 @@ export default async function FeedbackPage() {
       </section>
 
       <section className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-        <form
-          action="mailto:support@flowsyncdata.com"
-          className="rounded-lg border border-stone-200 bg-white p-6 shadow-sm"
-          encType="text/plain"
-          method="post"
-        >
-          <div className="grid gap-4">
-            <label className="grid gap-2 text-sm font-semibold text-slate-700">
-              Email
-              <input
-                className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950"
-                defaultValue={user.email ?? ""}
-                name="email"
-                type="email"
-              />
-            </label>
-
-            <label className="grid gap-2 text-sm font-semibold text-slate-700">
-              Topic
-              <select
-                className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950"
-                defaultValue={feedbackTopics[0]}
-                name="topic"
-              >
-                {feedbackTopics.map((topic) => (
-                  <option key={topic} value={topic}>
-                    {topic}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="grid gap-2 text-sm font-semibold text-slate-700">
-              Message
-              <textarea
-                className="min-h-40 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950"
-                name="message"
-                placeholder="Describe what happened, which Etsy CSV file was involved, and what result you expected."
-              />
-            </label>
-          </div>
-
-          <button
-            className="mt-5 inline-flex items-center justify-center rounded-md bg-teal-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-800"
-            type="submit"
-          >
-            Open email app
-          </button>
-          <p className="mt-3 text-xs leading-5 text-slate-500">
-            This form opens your email app and does not save feedback to the database.
-          </p>
-        </form>
+        <FeedbackForm
+          defaultEmail={user?.email ?? ""}
+          topics={feedbackTopics}
+        />
 
         <aside className="rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
           <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">

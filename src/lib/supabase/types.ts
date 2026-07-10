@@ -150,6 +150,65 @@ export interface Database {
           },
         ];
       };
+      waitlist_submissions: {
+        Row: {
+          id: string;
+          email: string;
+          interest: string;
+          source_page: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          email: string;
+          interest: string;
+          source_page: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          email?: string;
+          interest?: string;
+          source_page?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      feedback_submissions: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          email: string | null;
+          topic: string;
+          message: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id?: string | null;
+          email?: string | null;
+          topic: string;
+          message: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string | null;
+          email?: string | null;
+          topic?: string;
+          message?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "feedback_submissions_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       upload_batches: {
         Row: {
           id: string;

@@ -100,7 +100,16 @@ export function AppSidebar({
               CSV preview, Profit Preview, and Excel download are currently free.
             </p>
           </div>
-          <AccountMenu email={email} fullWidth placement="top" />
+          {email ? (
+            <AccountMenu email={email} fullWidth placement="top" />
+          ) : (
+            <Link
+              className="inline-flex w-full items-center justify-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              href="/login"
+            >
+              Sign In
+            </Link>
+          )}
         </div>
       </aside>
 
@@ -109,7 +118,16 @@ export function AppSidebar({
           <Link className="text-lg font-black text-slate-950" href="/">
             FlowSync AI
           </Link>
-          <AccountMenu email={email} />
+          {email ? (
+            <AccountMenu email={email} />
+          ) : (
+            <Link
+              className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700"
+              href="/login"
+            >
+              Sign In
+            </Link>
+          )}
         </div>
         <nav className="flex gap-2 overflow-x-auto border-t border-stone-100 px-4 py-2">
           {navigation.map((item) => {

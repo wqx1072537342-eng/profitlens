@@ -36,6 +36,23 @@ export interface AdminDownloadRow {
   created_at: string;
 }
 
+export interface AdminWaitlistSubmissionRow {
+  id: string;
+  email: string;
+  interest: string;
+  source_page: string;
+  created_at: string;
+}
+
+export interface AdminFeedbackSubmissionRow {
+  id: string;
+  user_id: string | null;
+  email: string | null;
+  topic: string;
+  message: string;
+  created_at: string;
+}
+
 export interface AdminMetrics {
   totalUsers: number;
   totalUploadBatches: number;
@@ -57,6 +74,8 @@ export interface AdminMetrics {
   reportsLast30Days: number;
   downloadsLast7Days: number;
   downloadsLast30Days: number;
+  totalWaitlistSubmissions: number;
+  totalFeedbackSubmissions: number;
 }
 
 export interface RecentAdminReport {
@@ -79,12 +98,30 @@ export interface RecentAdminDownload {
   createdAt: string;
 }
 
+export interface RecentAdminWaitlistSubmission {
+  id: string;
+  email: string;
+  interest: string;
+  sourcePage: string;
+  createdAt: string;
+}
+
+export interface RecentAdminFeedbackSubmission {
+  id: string;
+  userEmail: string;
+  topic: string;
+  message: string;
+  createdAt: string;
+}
+
 export interface AdminUsageDashboard {
   metrics: AdminMetrics;
   conversionFunnel: AdminFunnelStep[];
   highIntentUsers: AdminHighIntentUser[];
   recentReports: RecentAdminReport[];
   recentDownloads: RecentAdminDownload[];
+  recentWaitlistSubmissions: RecentAdminWaitlistSubmission[];
+  recentFeedbackSubmissions: RecentAdminFeedbackSubmission[];
 }
 
 export interface AdminFunnelStep {
@@ -236,7 +273,11 @@ export function buildAdminUsageDashboard(input: {
   uploads: readonly AdminUploadRow[];
   reports: readonly AdminReportRow[];
   downloads: readonly AdminDownloadRow[];
+  waitlistSubmissions?: readonly AdminWaitlistSubmissionRow[];
+  feedbackSubmissions?: readonly AdminFeedbackSubmissionRow[];
 }): AdminUsageDashboard {
+  const waitlistSubmissions = input.waitlistSubmissions ?? [];
+  const feedbackSubmissions = input.feedbackSubmissions ?? [];
   const uploadUserIds = new Set(input.uploadBatches.map((batch) => batch.user_id));
   const reportUserIds = new Set(input.reports.map((report) => report.user_id));
   const downloadUserIds = new Set(input.downloads.map((download) => download.user_id));
@@ -302,10 +343,12 @@ export function buildAdminUsageDashboard(input: {
       reportWarningRate: percent(reportsWithWarnings, input.reports.length),
       signupToUploadRate,
       totalDownloads: input.downloads.length,
+      totalFeedbackSubmissions: feedbackSubmissions.length,
       totalReports: input.reports.length,
       totalUploadBatches: input.uploadBatches.length,
       totalUploadedFiles: input.uploads.length,
       totalUsers: input.users.length,
+      totalWaitlistSubmissions: waitlistSubmissions.length,
       uploadToReportRate,
       usersWithAtLeastOneUpload: uploadUserIds.size,
       usersWithAtLeastOneDownload: downloadUserIds.size,
@@ -321,6 +364,19 @@ export function buildAdminUsageDashboard(input: {
         reportId: download.report_id,
         userEmail: usersById.get(download.user_id) ?? "Unknown user",
       })),
+    recentFeedbackSubmissions: [...feedbackSubmissions]
+      .sort((left, right) => right.created_at.localeCompare(left.created_at))
+      .slice(0, 10)
+      .map((feedback) => ({
+        createdAt: feedback.created_at,
+        id: feedback.id,
+        message: feedback.message,
+        topic: feedback.topic,
+        userEmail:
+          (feedback.user_id ? usersById.get(feedback.user_id) : null) ??
+          feedback.email ??
+          "Anonymous",
+      })),
     recentReports: [...input.reports]
       .sort((left, right) => right.created_at.localeCompare(left.created_at))
       .slice(0, 10)
@@ -334,6 +390,16 @@ export function buildAdminUsageDashboard(input: {
         netProfitBeforeCOGS: report.net_profit_before_cogs,
         userEmail: usersById.get(report.user_id) ?? "Unknown user",
         warningCount: warningCountFromJson(report.warnings_json),
+      })),
+    recentWaitlistSubmissions: [...waitlistSubmissions]
+      .sort((left, right) => right.created_at.localeCompare(left.created_at))
+      .slice(0, 10)
+      .map((submission) => ({
+        createdAt: submission.created_at,
+        email: submission.email,
+        id: submission.id,
+        interest: submission.interest,
+        sourcePage: submission.source_page,
       })),
   };
 }

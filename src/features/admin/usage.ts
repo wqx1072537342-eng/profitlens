@@ -51,7 +51,15 @@ export async function loadAdminUsageDashboard(): Promise<AdminUsageResult> {
     };
   }
 
-  const [users, uploadBatches, uploads, reports, downloads] = await Promise.all([
+  const [
+    users,
+    uploadBatches,
+    uploads,
+    reports,
+    downloads,
+    waitlistSubmissions,
+    feedbackSubmissions,
+  ] = await Promise.all([
     supabase.from("users").select("id,email,created_at"),
     supabase.from("upload_batches").select("id,user_id,created_at"),
     supabase.from("uploads").select("id,user_id"),
@@ -63,11 +71,23 @@ export async function loadAdminUsageDashboard(): Promise<AdminUsageResult> {
     supabase
       .from("download_events")
       .select("id,user_id,report_id,file_type,created_at"),
+    supabase
+      .from("waitlist_submissions")
+      .select("id,email,interest,source_page,created_at"),
+    supabase
+      .from("feedback_submissions")
+      .select("id,user_id,email,topic,message,created_at"),
   ]);
 
-  const failed = [users, uploadBatches, uploads, reports, downloads].find(
-    (result) => result.error,
-  );
+  const failed = [
+    users,
+    uploadBatches,
+    uploads,
+    reports,
+    downloads,
+    waitlistSubmissions,
+    feedbackSubmissions,
+  ].find((result) => result.error);
 
   if (failed?.error) {
     return {
@@ -83,6 +103,8 @@ export async function loadAdminUsageDashboard(): Promise<AdminUsageResult> {
       uploadBatches: uploadBatches.data ?? [],
       uploads: uploads.data ?? [],
       users: users.data ?? [],
+      feedbackSubmissions: feedbackSubmissions.data ?? [],
+      waitlistSubmissions: waitlistSubmissions.data ?? [],
     }),
     status: "success",
   };

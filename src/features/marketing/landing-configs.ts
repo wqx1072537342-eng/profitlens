@@ -3,7 +3,7 @@ import type { LandingPageConfig } from "./seo-landing-page";
 export const landingPages = {
   amazonSettlementConverter: {
     canonicalPath: "/amazon-settlement-converter",
-    ctaHref: "mailto:support@flowsyncdata.com?subject=Amazon%20Settlement%20Converter%20Waitlist",
+    ctaHref: "#waitlist",
     ctaLabel: "Join waitlist",
     description:
       "Convert Amazon settlement exports into accounting-ready records with mapping, validation and export workflows. Amazon support is Coming Soon.",
@@ -15,7 +15,7 @@ export const landingPages = {
   },
   amazonToQuickBooks: {
     canonicalPath: "/amazon-to-quickbooks",
-    ctaHref: "mailto:support@flowsyncdata.com?subject=Amazon%20to%20QuickBooks%20Waitlist",
+    ctaHref: "#waitlist",
     ctaLabel: "Join waitlist",
     description:
       "Convert Amazon settlement data into accounting-ready QuickBooks records. Amazon integration is planned and clearly marked Coming Soon.",
@@ -87,7 +87,7 @@ export const landingPages = {
   },
   shopifyCsvConverter: {
     canonicalPath: "/shopify-csv-converter",
-    ctaHref: "mailto:support@flowsyncdata.com?subject=Shopify%20CSV%20Converter%20Waitlist",
+    ctaHref: "#waitlist",
     ctaLabel: "Join waitlist",
     description:
       "Prepare Shopify CSV exports for accounting workflows with field mapping, cleaning and validation. Shopify support is Coming Soon.",
@@ -99,7 +99,7 @@ export const landingPages = {
   },
   shopifyToQuickBooks: {
     canonicalPath: "/shopify-to-quickbooks",
-    ctaHref: "mailto:support@flowsyncdata.com?subject=Shopify%20to%20QuickBooks%20Waitlist",
+    ctaHref: "#waitlist",
     ctaLabel: "Join waitlist",
     description:
       "Prepare Shopify orders, fees and refunds for QuickBooks. Shopify integration is planned and marked Coming Soon.",

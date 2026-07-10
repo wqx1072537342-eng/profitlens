@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { PublicFooter, PublicHeader } from "@/features/marketing/public-site";
+import { WaitlistForm } from "@/features/submissions/waitlist-form";
 import { absoluteUrl, SITE_NAME } from "@/lib/seo/site";
 
 export interface LandingPageConfig {
@@ -68,7 +69,10 @@ export function SeoLandingPage({ config }: { config: LandingPageConfig }) {
           </div>
         </div>
 
-        <aside className="rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
+        <aside
+          className="rounded-lg border border-stone-200 bg-white p-6 shadow-sm"
+          id="waitlist"
+        >
           <div className="flex items-start justify-between gap-3">
             <p className="text-sm font-black uppercase tracking-wide text-slate-500">
               Status
@@ -95,26 +99,7 @@ export function SeoLandingPage({ config }: { config: LandingPageConfig }) {
               Etsy CSV analysis is available now in the FlowSync AI beta.
             </p>
           ) : (
-            <form
-              action="mailto:support@flowsyncdata.com"
-              className="mt-5 grid gap-3 rounded-md border border-amber-200 bg-amber-50 p-4"
-            >
-              <p className="text-sm font-bold text-amber-950">
-                This integration is Coming Soon. Email us to join the waitlist.
-              </p>
-              <input
-                className="rounded-md border border-amber-200 bg-white px-3 py-2 text-sm outline-none focus:border-teal-700"
-                name="email"
-                placeholder="you@example.com"
-                type="email"
-              />
-              <button
-                className="rounded-md bg-slate-950 px-4 py-2 text-sm font-bold text-white"
-                type="submit"
-              >
-                Join waitlist
-              </button>
-            </form>
+            <WaitlistForm interest={config.kicker} sourcePage={config.canonicalPath} />
           )}
         </aside>
       </section>

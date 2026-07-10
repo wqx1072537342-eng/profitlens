@@ -103,6 +103,17 @@ export default async function AdminPage() {
         />
         <MetricCard label="High-intent users" value={dashboard.metrics.highIntentUsers} />
         <MetricCard
+          label="Waitlist leads"
+          value={dashboard.metrics.totalWaitlistSubmissions}
+        />
+        <MetricCard
+          label="Feedback saved"
+          value={dashboard.metrics.totalFeedbackSubmissions}
+        />
+      </section>
+
+      <section className="grid gap-3 md:grid-cols-2">
+        <MetricCard
           label="Reports with warnings"
           value={dashboard.metrics.reportsWithWarnings}
         />
@@ -252,6 +263,104 @@ export default async function AdminPage() {
             </tbody>
           </table>
         </div>
+      </section>
+
+      <section className="grid gap-6 xl:grid-cols-2">
+        <section className="rounded-lg border border-stone-200 bg-white shadow-sm">
+          <div className="border-b border-stone-200 p-5">
+            <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+              Recent waitlist submissions
+            </p>
+            <h2 className="mt-2 text-2xl font-black text-slate-950">
+              Coming Soon demand
+            </h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full border-collapse text-left text-sm">
+              <thead className="border-b border-stone-200 bg-stone-50 text-xs uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th className="px-4 py-3">Email</th>
+                  <th className="px-4 py-3">Interest</th>
+                  <th className="px-4 py-3">Source</th>
+                  <th className="px-4 py-3">Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dashboard.recentWaitlistSubmissions.length === 0 ? (
+                  <tr>
+                    <td className="px-4 py-5 text-slate-600" colSpan={4}>
+                      No waitlist submissions yet.
+                    </td>
+                  </tr>
+                ) : (
+                  dashboard.recentWaitlistSubmissions.map((submission) => (
+                    <tr className="border-b border-stone-100 last:border-0" key={submission.id}>
+                      <td className="px-4 py-4 font-semibold text-slate-950">
+                        {submission.email}
+                      </td>
+                      <td className="px-4 py-4 text-slate-700">
+                        {submission.interest}
+                      </td>
+                      <td className="px-4 py-4 text-slate-700">
+                        {submission.sourcePage}
+                      </td>
+                      <td className="px-4 py-4 text-slate-700">
+                        {formatDate(submission.createdAt)}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-stone-200 bg-white shadow-sm">
+          <div className="border-b border-stone-200 p-5">
+            <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+              Recent feedback
+            </p>
+            <h2 className="mt-2 text-2xl font-black text-slate-950">
+              Product friction
+            </h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full border-collapse text-left text-sm">
+              <thead className="border-b border-stone-200 bg-stone-50 text-xs uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th className="px-4 py-3">User</th>
+                  <th className="px-4 py-3">Topic</th>
+                  <th className="px-4 py-3">Message</th>
+                  <th className="px-4 py-3">Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dashboard.recentFeedbackSubmissions.length === 0 ? (
+                  <tr>
+                    <td className="px-4 py-5 text-slate-600" colSpan={4}>
+                      No feedback submissions yet.
+                    </td>
+                  </tr>
+                ) : (
+                  dashboard.recentFeedbackSubmissions.map((feedback) => (
+                    <tr className="border-b border-stone-100 last:border-0" key={feedback.id}>
+                      <td className="px-4 py-4 font-semibold text-slate-950">
+                        {feedback.userEmail}
+                      </td>
+                      <td className="px-4 py-4 text-slate-700">{feedback.topic}</td>
+                      <td className="max-w-xs truncate px-4 py-4 text-slate-700">
+                        {feedback.message}
+                      </td>
+                      <td className="px-4 py-4 text-slate-700">
+                        {formatDate(feedback.createdAt)}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </section>
 
       <section className="rounded-lg border border-stone-200 bg-white shadow-sm">

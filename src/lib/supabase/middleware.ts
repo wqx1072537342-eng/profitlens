@@ -12,7 +12,6 @@ const protectedRoutes = [
   "/billing",
   "/account",
   "/settings",
-  "/feedback",
 ];
 const authRoutes = ["/login", "/signup"];
 

@@ -33,6 +33,24 @@ describe("admin usage analytics", () => {
           user_id: "user-1",
         },
       ],
+      feedbackSubmissions: [
+        {
+          created_at: "2026-07-08T07:00:00.000Z",
+          email: "anon@example.com",
+          id: "feedback-1",
+          message: "Please support Shopify exports next.",
+          topic: "I would pay for this",
+          user_id: null,
+        },
+        {
+          created_at: "2026-07-08T08:00:00.000Z",
+          email: "seller1@example.com",
+          id: "feedback-2",
+          message: "The report warning was useful.",
+          topic: "Report numbers look wrong",
+          user_id: "user-1",
+        },
+      ],
       reports: [
         {
           created_at: "2026-07-08T03:00:00.000Z",
@@ -76,6 +94,15 @@ describe("admin usage analytics", () => {
           id: "user-3",
         },
       ],
+      waitlistSubmissions: [
+        {
+          created_at: "2026-07-08T06:00:00.000Z",
+          email: "lead@example.com",
+          id: "waitlist-1",
+          interest: "Shopify to QuickBooks",
+          source_page: "/shopify-to-quickbooks",
+        },
+      ],
     });
 
     expect(dashboard.metrics).toMatchObject({
@@ -85,10 +112,12 @@ describe("admin usage analytics", () => {
       reportWarningRate: 50,
       signupToUploadRate: 33.3,
       totalDownloads: 2,
+      totalFeedbackSubmissions: 2,
       totalReports: 2,
       totalUploadBatches: 1,
       totalUploadedFiles: 1,
       totalUsers: 3,
+      totalWaitlistSubmissions: 1,
       uploadToReportRate: 100,
       usersWithAtLeastOneUpload: 1,
       usersWithAtLeastOneDownload: 1,
@@ -116,6 +145,16 @@ describe("admin usage analytics", () => {
     });
     expect(dashboard.recentDownloads[0]).toMatchObject({
       id: "download-2",
+      userEmail: "seller1@example.com",
+    });
+    expect(dashboard.recentWaitlistSubmissions[0]).toMatchObject({
+      email: "lead@example.com",
+      interest: "Shopify to QuickBooks",
+      sourcePage: "/shopify-to-quickbooks",
+    });
+    expect(dashboard.recentFeedbackSubmissions[0]).toMatchObject({
+      id: "feedback-2",
+      topic: "Report numbers look wrong",
       userEmail: "seller1@example.com",
     });
   });
