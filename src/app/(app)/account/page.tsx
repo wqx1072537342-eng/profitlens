@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { signOutAction } from "@/features/auth/actions";
 import { getCurrentUser } from "@/features/auth/session";
 import { loadReportHistory } from "@/features/reports/history";
 
@@ -122,6 +123,31 @@ export default async function AccountPage() {
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+              Session
+            </p>
+            <h2 className="mt-2 text-2xl font-black text-slate-950">
+              Log out of this workspace
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+              This signs you out of ProfitLens on this browser and returns you to the
+              login page.
+            </p>
+          </div>
+          <form action={signOutAction}>
+            <button
+              className="inline-flex items-center justify-center rounded-md border border-rose-200 bg-white px-4 py-2 text-sm font-bold text-rose-700 transition hover:bg-rose-50"
+              type="submit"
+            >
+              Log out
+            </button>
+          </form>
         </div>
       </section>
     </div>

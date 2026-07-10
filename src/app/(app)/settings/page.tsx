@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { signOutAction } from "@/features/auth/actions";
 import { getCurrentUser } from "@/features/auth/session";
 
 export const dynamic = "force-dynamic";
@@ -81,6 +82,31 @@ export default async function SettingsPage() {
           To change auth details, use the current login and password reset flow. No
           custom profile database writes are added in Sprint 6.
         </p>
+      </section>
+
+      <section className="rounded-lg border border-stone-200 bg-white p-6 shadow-sm">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+              Session
+            </p>
+            <h2 className="mt-2 text-2xl font-black text-slate-950">
+              Sign out safely
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+              Use this when you are finished reviewing uploads, reports, or admin
+              data on this device.
+            </p>
+          </div>
+          <form action={signOutAction}>
+            <button
+              className="inline-flex items-center justify-center rounded-md border border-rose-200 bg-white px-4 py-2 text-sm font-bold text-rose-700 transition hover:bg-rose-50"
+              type="submit"
+            >
+              Log out
+            </button>
+          </form>
+        </div>
       </section>
     </div>
   );
