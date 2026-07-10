@@ -11,10 +11,14 @@ import {
   MAX_UPLOAD_FILES,
   type EtsyCsvUploadAnalysis,
 } from "@/lib/csv-upload/analyzeEtsyCsvUpload";
+import { calculateUploadedReconciliationFromParsedRows } from "@/lib/etsy-reconcile/uploadedReconciliation";
 import {
   analyzeBatchCompleteness,
   completenessLabel,
+  type ReportCompletenessStatus,
 } from "@/lib/reports/batchCompleteness";
+import { buildProfitPreviewSummary } from "@/lib/reports/buildProfitPreviewSummary";
+import type { ProfitPreviewSummary } from "@/lib/reports/buildProfitPreviewSummary";
 
 import { saveUploadBatchAction } from "./actions";
 import type {
@@ -85,11 +89,52 @@ function toUploadMetadata(analysis: EtsyCsvUploadAnalysis): UploadFileMetadata {
 
 interface UploadCsvClientProps {
   initialWorkspace: UploadWorkspaceBatch | null;
-  userEmail: string;
+  userEmail: string | null;
+}
+
+interface GuestPreview {
+  completenessStatus: ReportCompletenessStatus;
+  includedFileTypes: string[];
+  missingFileTypes: string[];
+  summary: ProfitPreviewSummary;
+  warningCount: number;
+}
+
+function formatMoney(value: number, currency: string) {
+  try {
+    return new Intl.NumberFormat("en-US", {
+      currency,
+      style: "currency",
+    }).format(value);
+  } catch {
+    return `${currency} ${value.toFixed(2)}`;
+  }
+}
+
+function buildLocalWorkspace(analyses: EtsyCsvUploadAnalysis[]): UploadWorkspaceBatch {
+  const warningTotal = analyses.reduce(
+    (sum, analysis) => sum + analysis.warnings.length,
+    0,
+  );
+
+  return {
+    batchId: "guest-preview",
+    fileCount: analyses.length,
+    files: analyses.map((analysis) => ({
+      fileName: analysis.fileName,
+      fileSizeBytes: analysis.fileSizeBytes,
+      fileType: analysis.fileType,
+      rowCount: analysis.rowCount,
+      warningCount: analysis.warnings.length,
+    })),
+    status: warningTotal > 0 ? "warning" : "parsed",
+    warningCount: warningTotal,
+  };
 }
 
 export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClientProps) {
   const router = useRouter();
+  const isSignedIn = Boolean(userEmail);
   const [analyses, setAnalyses] = useState<EtsyCsvUploadAnalysis[]>([]);
   const [workspace, setWorkspace] = useState<UploadWorkspaceBatch | null>(
     initialWorkspace,
@@ -98,6 +143,7 @@ export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClient
   const [saveResult, setSaveResult] = useState<SaveUploadBatchResult | null>(null);
   const [previewResult, setPreviewResult] =
     useState<GenerateProfitPreviewResult | null>(null);
+  const [guestPreview, setGuestPreview] = useState<GuestPreview | null>(null);
   const [isSaving, startSaveTransition] = useTransition();
   const [isGenerating, startGenerateTransition] = useTransition();
   const warningCount = useMemo(
@@ -112,6 +158,7 @@ export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClient
   async function handleFiles(files: FileList | null) {
     setSaveResult(null);
     setPreviewResult(null);
+    setGuestPreview(null);
 
     const selectedFiles = Array.from(files ?? []);
     const nextErrors: string[] = [];
@@ -165,6 +212,19 @@ export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClient
     setAnalyses(nextAnalyses);
     setErrorMessages([]);
 
+    if (!isSignedIn) {
+      const localWorkspace = buildLocalWorkspace(nextAnalyses);
+      setWorkspace(localWorkspace);
+      setSaveResult({
+        batchId: localWorkspace.batchId,
+        message:
+          "CSV files were analyzed in this browser. Log in before downloading the Excel report.",
+        status: "success",
+        workspace: localWorkspace,
+      });
+      return;
+    }
+
     startSaveTransition(() => {
       void saveUploadBatchAction({
         files: nextAnalyses.map(toUploadMetadata),
@@ -187,6 +247,54 @@ export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClient
       return;
     }
 
+    if (!isSignedIn) {
+      startGenerateTransition(() => {
+        void calculateUploadedReconciliationFromParsedRows(
+          analyses.map((analysis) => ({
+            fileName: analysis.fileName,
+            fileType: analysis.fileType,
+            headers: analysis.headers,
+            rows: analysis.rows,
+          })),
+        )
+          .then((reconciliation) => {
+            const completeness = analyzeBatchCompleteness(
+              analyses.map((analysis) => analysis.fileType),
+            );
+            const summary = buildProfitPreviewSummary(reconciliation.report);
+            const warnings = [...summary.warnings, ...completeness.warnings];
+
+            setGuestPreview({
+              completenessStatus: completeness.status,
+              includedFileTypes: completeness.includedFileTypes,
+              missingFileTypes: completeness.missingFileTypes.map(
+                (missing) => missing.fileType,
+              ),
+              summary: {
+                ...summary,
+                warnings,
+              },
+              warningCount: warnings.length,
+            });
+            setPreviewResult({
+              message:
+                "Temporary Profit Preview generated. Log in before downloading the Excel report.",
+              status: "error",
+            });
+          })
+          .catch((error) => {
+            setPreviewResult({
+              message:
+                error instanceof Error
+                  ? error.message
+                  : "Could not generate a temporary Profit Preview.",
+              status: "error",
+            });
+          });
+      });
+      return;
+    }
+
     startGenerateTransition(() => {
       void generateProfitPreviewAction({
         uploadBatchId: workspace.batchId,
@@ -204,6 +312,7 @@ export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClient
     setWorkspace(null);
     setSaveResult(null);
     setPreviewResult(null);
+    setGuestPreview(null);
     setErrorMessages([]);
   }
 
@@ -219,9 +328,20 @@ export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClient
               Upload Etsy CSV files
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-              Signed in as <span className="font-semibold">{userEmail}</span>. Upload
-              one CSV or select multiple official Etsy CSV exports at once. ProfitLens
-              groups them into one report batch and tells you what is still missing.
+              {isSignedIn ? (
+                <>
+                  Signed in as <span className="font-semibold">{userEmail}</span>. Upload
+                  one CSV or select multiple official Etsy CSV exports at once.
+                  ProfitLens groups them into one report batch and tells you what is
+                  still missing.
+                </>
+              ) : (
+                <>
+                  Upload one CSV or select multiple official Etsy CSV exports at once.
+                  You can analyze a temporary preview without logging in. Log in only
+                  when you want to download the Excel report.
+                </>
+              )}
             </p>
           </div>
           <div className="rounded-md border border-teal-200 bg-teal-50 px-3 py-2 text-sm font-semibold text-teal-900">
@@ -347,7 +467,7 @@ export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClient
               onClick={handleGeneratePreview}
               type="button"
             >
-              {isGenerating ? "Generating..." : "Generate Preview"}
+              {isGenerating ? "Generating..." : "Analyze Preview"}
             </button>
           </div>
 
@@ -421,7 +541,92 @@ export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClient
           </div>
         ) : null}
 
-        {previewResult ? (
+        {guestPreview ? (
+          <div className="grid gap-4 rounded-lg border border-teal-200 bg-teal-50 p-5">
+            <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+              <div>
+                <p className="text-sm font-bold uppercase tracking-wide text-teal-900">
+                  Temporary Profit Preview
+                </p>
+                <h3 className="mt-2 text-2xl font-black text-slate-950">
+                  {completenessLabel(guestPreview.completenessStatus)} CSV coverage
+                </h3>
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-700">
+                  This preview is generated in your browser from the CSV files you
+                  selected. To download the Excel workbook and save report history,
+                  log in and upload the CSV files to your account.
+                </p>
+              </div>
+              <a
+                className="inline-flex items-center justify-center rounded-md bg-teal-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-teal-800"
+                href="/login"
+              >
+                Log in to download Excel
+              </a>
+            </div>
+
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+              {[
+                ["Gross Sales", guestPreview.summary.grossSales],
+                ["Refunds", guestPreview.summary.refunds],
+                ["Etsy Fees", guestPreview.summary.fees],
+                ["Ads", guestPreview.summary.ads],
+                ["Shipping Labels", guestPreview.summary.shipping],
+                ["Sales Tax / VAT / GST", guestPreview.summary.taxCollected],
+                ["Net Profit Before COGS", guestPreview.summary.netProfitBeforeCOGS],
+                ["Net Profit After COGS", guestPreview.summary.netProfitAfterCOGS],
+              ].map(([label, value]) => (
+                <div className="rounded-md border border-teal-100 bg-white p-4" key={label}>
+                  <p className="text-sm font-semibold text-slate-500">{label}</p>
+                  <p className="mt-2 text-xl font-black text-slate-950">
+                    {formatMoney(Number(value), guestPreview.summary.currency)}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="grid gap-3 md:grid-cols-2">
+              <div className="rounded-md border border-teal-100 bg-white p-4">
+                <p className="text-sm font-black uppercase text-slate-500">
+                  Included CSV types
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {guestPreview.includedFileTypes.map((fileType) => (
+                    <span className="rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-bold text-teal-900" key={fileType}>
+                      {fileType}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="rounded-md border border-amber-200 bg-white p-4">
+                <p className="text-sm font-black uppercase text-slate-500">
+                  Missing CSV types
+                </p>
+                {guestPreview.missingFileTypes.length === 0 ? (
+                  <p className="mt-3 text-sm font-semibold text-teal-900">
+                    Core CSV coverage is complete.
+                  </p>
+                ) : (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {guestPreview.missingFileTypes.map((fileType) => (
+                      <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-900" key={fileType}>
+                        {fileType}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <p className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950">
+              {guestPreview.warningCount} warning
+              {guestPreview.warningCount === 1 ? "" : "s"} detected. This is a
+              temporary analysis, not tax, legal, or accounting advice.
+            </p>
+          </div>
+        ) : null}
+
+        {previewResult && !guestPreview ? (
           <div
             className={`rounded-md border px-4 py-3 text-sm ${
               previewResult.status === "success"

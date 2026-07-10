@@ -9,16 +9,16 @@ export const dynamic = "force-dynamic";
 export default async function UploadPage() {
   const { isConfigured, user } = await getCurrentUser();
 
-  if (!isConfigured || !user) {
+  if (!isConfigured) {
     redirect("/login");
   }
 
-  const workspace = await loadLatestUploadWorkspace();
+  const workspace = user ? await loadLatestUploadWorkspace() : null;
 
   return (
     <UploadCsvClient
       initialWorkspace={workspace}
-      userEmail={user.email ?? "your account"}
+      userEmail={user?.email ?? null}
     />
   );
 }
