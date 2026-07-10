@@ -8,7 +8,7 @@ const faqs = [
   {
     question: "Do I need to connect my Etsy account?",
     answer:
-      "No. ProfitLens is built for official Etsy CSV exports, so the beta does not require an Etsy account connection.",
+      "No. FlowSync AI is built for official Etsy CSV exports, so the beta does not require an Etsy account connection.",
   },
   {
     question: "Is the Excel download free?",
@@ -18,7 +18,7 @@ const faqs = [
   {
     question: "Is this tax advice?",
     answer:
-      "No. ProfitLens prepares bookkeeping reports for review. It is not tax, legal, or accounting advice.",
+      "No. FlowSync AI prepares bookkeeping reports for review. It is not tax, legal, or accounting advice.",
   },
 ];
 
@@ -115,7 +115,7 @@ export default function EtsyProfitReportPage() {
           {[
             [
               "Stop rebuilding Etsy spreadsheets by hand",
-              "ProfitLens organizes CSV categories into a profit report instead of leaving you with scattered exports.",
+              "FlowSync AI organizes CSV categories into a profit report instead of leaving you with scattered exports.",
             ],
             [
               "Show what is excluded from profit",
@@ -173,7 +173,7 @@ export default function EtsyProfitReportPage() {
             ))}
           </div>
           <p className="mt-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950">
-            ProfitLens is bookkeeping preparation software. It is not tax, legal, or
+            FlowSync AI is bookkeeping preparation software. It is not tax, legal, or
             accounting advice.
           </p>
         </div>

@@ -8,14 +8,14 @@ export const metadata: Metadata = {
     canonical: absoluteUrl("/privacy"),
   },
   description:
-    "ProfitLens privacy policy for Etsy CSV uploads, report data, data handling, and deletion requests.",
+    "FlowSync AI privacy policy for Etsy CSV uploads, report data, data handling, and deletion requests.",
   title: "Privacy Policy",
 };
 
 const sections = [
   [
     "What information we collect",
-    "ProfitLens collects account email, uploaded CSV metadata, parsed report data, warnings, generated reports, and download events needed to operate the beta product.",
+    "FlowSync AI collects account email, uploaded CSV metadata, parsed report data, warnings, generated reports, and download events needed to operate the beta product.",
   ],
   [
     "Uploaded CSV and report data",
@@ -23,15 +23,15 @@ const sections = [
   ],
   [
     "What we do not do",
-    "ProfitLens does not ask for your Etsy password and does not connect to your Etsy account in the current beta.",
+    "FlowSync AI does not ask for your Etsy password and does not connect to your Etsy account in the current beta.",
   ],
   [
     "Service providers",
-    "ProfitLens uses hosting, authentication, and database providers such as Vercel and Supabase to operate the product.",
+    "FlowSync AI uses hosting, authentication, and database providers such as Vercel and Supabase to operate the product.",
   ],
   [
     "Data deletion requests",
-    "You can request data deletion by contacting support@profitlens.app from the email associated with your account.",
+    "You can request data deletion by contacting support@flowsyncdata.com from the email associated with your account.",
   ],
 ];
 
@@ -42,7 +42,7 @@ export default function PrivacyPage() {
       <section className="mx-auto max-w-4xl px-5 py-14">
         <h1 className="text-5xl font-black leading-tight">Privacy Policy</h1>
         <p className="mt-5 text-lg leading-8 text-slate-600">
-          ProfitLens is an Etsy-first bookkeeping preparation tool. This page explains
+          FlowSync AI is an Etsy-first bookkeeping preparation tool. This page explains
           how the current beta handles account, CSV, report, and download data.
         </p>
         <div className="mt-8 grid gap-4">
@@ -54,7 +54,7 @@ export default function PrivacyPage() {
           ))}
         </div>
         <p className="mt-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950">
-          Contact: support@profitlens.app
+          Contact: support@flowsyncdata.com
         </p>
       </section>
       <PublicFooter />

@@ -22,7 +22,8 @@ export default async function SignupPage() {
         </p>
         <h2 className="mt-2 text-2xl font-black text-slate-950">Create account</h2>
         <p className="mt-2 text-sm leading-6 text-slate-600">
-          Create a ProfitLens account so report ownership can be tied to your user.
+          Create a FlowSync AI account so reports and downloads can be tied to your
+          user.
         </p>
       </div>
 
@@ -44,4 +45,3 @@ export default async function SignupPage() {
     </div>
   );
 }
-

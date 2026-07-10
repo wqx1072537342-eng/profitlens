@@ -29,7 +29,7 @@ export default async function AccountPage() {
           Account
         </p>
         <h1 className="mt-2 text-3xl font-black text-slate-950">
-          Your ProfitLens workspace
+          Your FlowSync AI workspace
         </h1>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
           Manage your Free Beta account and continue the Etsy CSV reporting workflow.
@@ -136,7 +136,7 @@ export default async function AccountPage() {
               Log out of this workspace
             </h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-              This signs you out of ProfitLens on this browser and returns you to the
+              This signs you out of FlowSync AI on this browser and returns you to the
               login page.
             </p>
           </div>

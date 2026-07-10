@@ -1,8 +1,15 @@
-export const SITE_NAME = "ProfitLens";
-export const DEFAULT_SITE_URL = "https://profitlens-delta.vercel.app";
+export const SITE_NAME = "FlowSync AI";
+export const SITE_TAGLINE = "AI Commerce Data Automation Platform";
+export const DEFAULT_SITE_URL = "https://flowsyncdata.com";
+export const DEFAULT_SEO_TITLE =
+  "FlowSync AI - Automate Etsy, Shopify and Amazon Data";
+export const DEFAULT_SEO_DESCRIPTION =
+  "Import, clean, map, validate and sync Etsy, Shopify and Amazon data to QuickBooks, Xero and spreadsheets with AI.";
 
 export function siteUrl() {
-  const configuredUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+  const configuredUrl =
+    process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
+    process.env.NEXT_PUBLIC_APP_URL?.trim();
   const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
 
   if (configuredUrl && !configuredUrl.includes("localhost")) {
@@ -31,6 +38,51 @@ export const publicRoutes = [
     changeFrequency: "weekly" as const,
     path: "/etsy-profit-report",
     priority: 0.95,
+  },
+  {
+    changeFrequency: "weekly" as const,
+    path: "/etsy-to-quickbooks",
+    priority: 0.92,
+  },
+  {
+    changeFrequency: "weekly" as const,
+    path: "/etsy-csv-converter",
+    priority: 0.9,
+  },
+  {
+    changeFrequency: "weekly" as const,
+    path: "/csv-to-quickbooks",
+    priority: 0.88,
+  },
+  {
+    changeFrequency: "weekly" as const,
+    path: "/csv-data-cleaner",
+    priority: 0.86,
+  },
+  {
+    changeFrequency: "weekly" as const,
+    path: "/ai-field-mapping",
+    priority: 0.86,
+  },
+  {
+    changeFrequency: "monthly" as const,
+    path: "/shopify-to-quickbooks",
+    priority: 0.7,
+  },
+  {
+    changeFrequency: "monthly" as const,
+    path: "/amazon-to-quickbooks",
+    priority: 0.7,
+  },
+  {
+    changeFrequency: "monthly" as const,
+    path: "/shopify-csv-converter",
+    priority: 0.65,
+  },
+  {
+    changeFrequency: "monthly" as const,
+    path: "/amazon-settlement-converter",
+    priority: 0.65,
   },
   {
     changeFrequency: "weekly" as const,
@@ -71,7 +123,7 @@ export function organizationJsonLd() {
     name: SITE_NAME,
     url: siteUrl(),
     description:
-      "ProfitLens helps Etsy sellers turn official CSV exports into CPA-ready profit reports.",
+      "FlowSync AI helps commerce teams import, clean, map, validate, and export marketplace data for accounting workflows.",
   };
 }
 
@@ -86,7 +138,8 @@ export function softwareApplicationJsonLd() {
       "@type": "Offer",
       price: "0",
       priceCurrency: "USD",
-      description: "Free beta for Etsy CSV Profit Preview and Excel download.",
+      description:
+        "Free beta for Etsy CSV analysis, validation, and Excel report download.",
     },
     url: siteUrl(),
   };

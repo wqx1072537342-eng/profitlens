@@ -317,7 +317,7 @@ function buildNextBestAction(input: {
 
   if (!latestUploadBatch) {
     return {
-      body: "Start with official Etsy CSV exports. ProfitLens will identify file types, warnings, and the fields available for a Profit Preview.",
+      body: "Start with official Etsy CSV exports. FlowSync AI will identify file types, warnings, and the fields available for a Profit Preview.",
       cta: "Upload Etsy CSV",
       href: "/upload",
       title: "Upload your first Etsy CSV files",

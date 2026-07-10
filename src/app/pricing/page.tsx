@@ -9,20 +9,20 @@ export const metadata: Metadata = {
     canonical: absoluteUrl("/pricing"),
   },
   description:
-    "ProfitLens pricing for Etsy sellers. Start with the free beta for Etsy CSV Profit Preview and Excel report downloads. Paid report and Pro plans are coming soon.",
+    "FlowSync AI pricing for Etsy sellers. Start with the free beta for Etsy CSV Profit Preview and Excel report downloads. Paid report and Pro plans are coming soon.",
   openGraph: {
     description:
-      "Start free with ProfitLens beta for Etsy CSV Profit Preview and Excel report downloads.",
-    title: "ProfitLens Pricing",
+      "Start free with FlowSync AI beta for Etsy CSV Profit Preview and Excel report downloads.",
+    title: "FlowSync AI Pricing",
     type: "website",
     url: absoluteUrl("/pricing"),
   },
-  title: "ProfitLens Pricing",
+  title: "FlowSync AI Pricing",
   twitter: {
     card: "summary_large_image",
     description:
-      "Start free with ProfitLens beta for Etsy CSV Profit Preview and Excel report downloads.",
-    title: "ProfitLens Pricing",
+      "Start free with FlowSync AI beta for Etsy CSV Profit Preview and Excel report downloads.",
+    title: "FlowSync AI Pricing",
   },
 };
 
@@ -31,7 +31,7 @@ const plans = [
     cta: "Start Free",
     ctaHref: "/signup",
     description:
-      "For Etsy sellers who want to test ProfitLens with real CSV files before paying.",
+      "For Etsy sellers who want to test FlowSync AI with real CSV files before paying.",
     features: [
       "Upload multiple Etsy CSV files",
       "CSV type detection and warnings",
@@ -45,7 +45,7 @@ const plans = [
   {
     cta: "Join interest list",
     ctaHref:
-      "mailto:support@profitlens.app?subject=ProfitLens%20One-Time%20Report%20Interest",
+      "mailto:support@flowsyncdata.com?subject=FlowSync AI%20One-Time%20Report%20Interest",
     description:
       "A future paid report package for sellers who only need tax-season cleanup.",
     features: [
@@ -60,7 +60,7 @@ const plans = [
   },
   {
     cta: "Join waitlist",
-    ctaHref: "mailto:support@profitlens.app?subject=ProfitLens%20Pro%20Waitlist",
+    ctaHref: "mailto:support@flowsyncdata.com?subject=FlowSync AI%20Pro%20Waitlist",
     description:
       "A later SaaS plan for sellers who want recurring profit tracking and deeper analysis.",
     features: [
@@ -86,10 +86,10 @@ export default function PricingPage() {
             Pricing
           </p>
           <h1 className="mt-3 text-4xl font-black leading-tight md:text-5xl">
-            Simple pricing. Start free while ProfitLens is in beta.
+            Simple pricing. Start free while FlowSync AI is in beta.
           </h1>
           <p className="mt-5 text-lg leading-8 text-slate-600">
-            ProfitLens is Etsy-first. The current MVP keeps CSV upload, Profit
+            FlowSync AI is Etsy-first. The current MVP keeps CSV upload, Profit
             Preview, and Excel download free while we validate what sellers and CPAs
             need most.
           </p>

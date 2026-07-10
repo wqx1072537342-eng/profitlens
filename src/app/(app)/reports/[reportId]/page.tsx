@@ -309,7 +309,7 @@ export default async function ReportPreviewPage({ params }: ReportPageProps) {
           {[
             [
               "No Etsy account connection required",
-              "ProfitLens does not connect to your Etsy account or use the Etsy API. You choose which CSV files to upload.",
+              "FlowSync AI does not connect to your Etsy account or use the Etsy API. You choose which CSV files to upload.",
             ],
             [
               "Generated from uploaded CSV data",

@@ -75,7 +75,7 @@ export function buildProfitReportCsv(report: ProfitReportExportRow): string {
   const generatedAt = new Date().toISOString();
 
   const rows = [
-    csvRow(["ProfitLens Etsy Profit Report"]),
+    csvRow(["FlowSync AI Etsy Profit Report"]),
     csvRow(["Generated At", generatedAt]),
     csvRow(["Report ID", report.id]),
     csvRow(["Report Created At", report.created_at]),

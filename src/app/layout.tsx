@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import {
   absoluteUrl,
+  DEFAULT_SEO_DESCRIPTION,
+  DEFAULT_SEO_TITLE,
   organizationJsonLd,
   SITE_NAME,
   siteUrl,
@@ -14,26 +16,23 @@ export const metadata: Metadata = {
   alternates: {
     canonical: absoluteUrl("/"),
   },
-  description:
-    "Upload Etsy CSV exports and generate a CPA-ready Etsy profit report with fees, refunds, shipping, tax, COGS, warnings, and Excel download.",
+  description: DEFAULT_SEO_DESCRIPTION,
   metadataBase: new URL(siteUrl()),
   openGraph: {
-    description:
-      "Upload Etsy CSV exports and generate a CPA-ready profit report with fees, refunds, shipping, tax, COGS, warnings, and Excel download.",
+    description: DEFAULT_SEO_DESCRIPTION,
     siteName: SITE_NAME,
-    title: "Etsy Profit Report by ProfitLens",
+    title: DEFAULT_SEO_TITLE,
     type: "website",
     url: absoluteUrl("/"),
   },
   title: {
-    default: "Etsy Profit Report by ProfitLens",
+    default: DEFAULT_SEO_TITLE,
     template: `%s | ${SITE_NAME}`,
   },
   twitter: {
     card: "summary_large_image",
-    description:
-      "Upload Etsy CSV exports and generate a CPA-ready Etsy profit report with fees, refunds, shipping, tax, COGS, warnings, and Excel download.",
-    title: "Etsy Profit Report by ProfitLens",
+    description: DEFAULT_SEO_DESCRIPTION,
+    title: DEFAULT_SEO_TITLE,
   },
 };
 

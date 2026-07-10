@@ -26,7 +26,7 @@ export default async function BillingPage() {
           Free Beta plan
         </h1>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
-          ProfitLens currently does not charge for Etsy CSV Profit Preview or Excel
+          FlowSync AI currently does not charge for Etsy CSV Profit Preview or Excel
           downloads. Stripe is intentionally not connected in this sprint.
         </p>
       </section>

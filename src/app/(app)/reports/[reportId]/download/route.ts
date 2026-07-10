@@ -13,7 +13,7 @@ interface DownloadRouteProps {
 }
 
 function xlsxFileName(reportId: string) {
-  return `profitlens-etsy-profit-report-${reportId.slice(0, 8)}.xlsx`;
+  return `flowsync-ai-etsy-profit-report-${reportId.slice(0, 8)}.xlsx`;
 }
 
 export async function GET(_request: Request, { params }: DownloadRouteProps) {

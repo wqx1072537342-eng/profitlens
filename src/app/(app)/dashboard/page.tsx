@@ -511,7 +511,7 @@ export default async function DashboardPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wide text-teal-800">
-              ProfitLens dashboard
+              FlowSync AI dashboard
             </p>
             <h1 className="mt-2 text-3xl font-black text-slate-950">
               Etsy profit workspace

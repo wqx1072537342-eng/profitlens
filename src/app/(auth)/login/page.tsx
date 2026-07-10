@@ -22,7 +22,7 @@ export default async function LoginPage() {
         </p>
         <h2 className="mt-2 text-2xl font-black text-slate-950">Welcome back</h2>
         <p className="mt-2 text-sm leading-6 text-slate-600">
-          Log in to access your protected ProfitLens dashboard.
+          Log in to access your protected FlowSync AI dashboard.
         </p>
       </div>
 
@@ -36,7 +36,7 @@ export default async function LoginPage() {
       <AuthForm action={signInAction} mode="login" />
 
       <p className="text-sm text-slate-600">
-        New to ProfitLens?{" "}
+        New to FlowSync AI?{" "}
         <Link className="font-semibold text-teal-800 hover:text-teal-900" href="/signup">
           Create an account
         </Link>
@@ -44,4 +44,3 @@ export default async function LoginPage() {
     </div>
   );
 }
-

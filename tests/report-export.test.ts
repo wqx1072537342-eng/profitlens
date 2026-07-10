@@ -52,7 +52,7 @@ describe("profit report CSV export", () => {
   it("builds an Excel-compatible CSV with summary, coverage, warnings, and disclaimer", () => {
     const csv = buildProfitReportCsv(sampleReport());
 
-    expect(csv).toContain('"ProfitLens Etsy Profit Report"');
+    expect(csv).toContain('"FlowSync AI Etsy Profit Report"');
     expect(csv).toContain('"Annual Summary"');
     expect(csv).toContain('"Gross Sales","120.00"');
     expect(csv).toContain('"Included CSV Types","orders, fees"');

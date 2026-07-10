@@ -8,18 +8,18 @@ export const metadata: Metadata = {
     canonical: absoluteUrl("/terms"),
   },
   description:
-    "ProfitLens terms of service for the Etsy CSV profit report beta, including bookkeeping preparation limits and no tax advice.",
+    "FlowSync AI terms of service for the Etsy CSV profit report beta, including bookkeeping preparation limits and no tax advice.",
   title: "Terms of Service",
 };
 
 const sections = [
   [
     "Beta product status",
-    "ProfitLens is currently a beta product. Features, pricing, exports, and availability may change as the product improves.",
+    "FlowSync AI is currently a beta product. Features, pricing, exports, and availability may change as the product improves.",
   ],
   [
     "Bookkeeping preparation only",
-    "ProfitLens provides reports for bookkeeping preparation and informational review. It is not tax, legal, or accounting advice.",
+    "FlowSync AI provides reports for bookkeeping preparation and informational review. It is not tax, legal, or accounting advice.",
   ],
   [
     "User responsibility",
@@ -35,7 +35,7 @@ const sections = [
   ],
   [
     "Service availability",
-    "ProfitLens may be unavailable during maintenance, product changes, provider outages, or beta updates.",
+    "FlowSync AI may be unavailable during maintenance, product changes, provider outages, or beta updates.",
   ],
 ];
 
@@ -46,7 +46,7 @@ export default function TermsPage() {
       <section className="mx-auto max-w-4xl px-5 py-14">
         <h1 className="text-5xl font-black leading-tight">Terms of Service</h1>
         <p className="mt-5 text-lg leading-8 text-slate-600">
-          These terms describe the current ProfitLens beta and the limits of the Etsy
+          These terms describe the current FlowSync AI beta and the limits of the Etsy
           CSV profit reporting workflow.
         </p>
         <div className="mt-8 grid gap-4">
@@ -58,7 +58,7 @@ export default function TermsPage() {
           ))}
         </div>
         <p className="mt-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950">
-          Contact: support@profitlens.app
+          Contact: support@flowsyncdata.com
         </p>
       </section>
       <PublicFooter />

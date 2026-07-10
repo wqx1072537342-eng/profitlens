@@ -24,7 +24,7 @@ const faqs = [
   {
     question: "Can I download an Excel report?",
     answer:
-      "Yes. In the current beta, ProfitLens supports Excel workbook download for generated reports.",
+      "Yes. In the current beta, FlowSync AI supports Excel workbook download for generated reports.",
   },
   {
     question: "Can I send the report to my CPA?",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     canonical: absoluteUrl("/sample-report"),
   },
   description:
-    "Preview the ProfitLens sample Etsy profit report structure: revenue, refunds, Etsy fees, ads, shipping labels, tax notes, COGS, warnings, and Excel workbook handoff.",
+    "Preview the FlowSync AI sample Etsy profit report structure: revenue, refunds, Etsy fees, ads, shipping labels, tax notes, COGS, warnings, and Excel workbook handoff.",
   openGraph: {
     description:
       "Preview a CPA-ready Etsy profit report structure before uploading your CSV files.",
@@ -70,7 +70,7 @@ export default function SampleReportPage() {
             Sample Etsy profit report for CPA review.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-            See how ProfitLens organizes Etsy CSV exports into a report package with
+            See how FlowSync AI organizes Etsy CSV exports into a report package with
             source notes, tax treatment, warnings, and Excel workbook sections.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">

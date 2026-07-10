@@ -332,7 +332,7 @@ export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClient
                 <>
                   Signed in as <span className="font-semibold">{userEmail}</span>. Upload
                   one CSV or select multiple official Etsy CSV exports at once.
-                  ProfitLens groups them into one report batch and tells you what is
+                  FlowSync AI groups them into one report batch and tells you what is
                   still missing.
                 </>
               ) : (
@@ -360,7 +360,7 @@ export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClient
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
             In Etsy, export official CSV reports for the same tax year or reporting
-            period. You can upload one file first and add missing files later; ProfitLens
+            period. You can upload one file first and add missing files later; FlowSync AI
             will keep them grouped in the same report batch.
           </p>
         </div>
@@ -373,7 +373,7 @@ export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClient
           ))}
         </div>
         <p className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950">
-          ProfitLens does not connect to your Etsy account. It only reads the CSV files
+          FlowSync AI does not connect to your Etsy account. It only reads the CSV files
           you choose to upload.
         </p>
       </section>

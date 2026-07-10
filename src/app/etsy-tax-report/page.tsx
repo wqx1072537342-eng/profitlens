@@ -6,14 +6,14 @@ import { absoluteUrl, faqJsonLd } from "@/lib/seo/site";
 
 const faqs = [
   {
-    question: "Can ProfitLens file my Etsy taxes?",
+    question: "Can FlowSync AI file my Etsy taxes?",
     answer:
-      "No. ProfitLens does not file taxes and does not provide tax advice. It prepares bookkeeping reports you can review and share with a CPA.",
+      "No. FlowSync AI does not file taxes and does not provide tax advice. It prepares bookkeeping reports you can review and share with a CPA.",
   },
   {
     question: "Does Sales Tax, VAT, or GST count as profit?",
     answer:
-      "ProfitLens shows Sales Tax, VAT, GST, and marketplace-collected tax separately and excludes them from net profit.",
+      "FlowSync AI shows Sales Tax, VAT, GST, and marketplace-collected tax separately and excludes them from net profit.",
   },
   {
     question: "What CSV files should I upload for tax season?",
@@ -59,7 +59,7 @@ export default function EtsyTaxReportPage() {
             Etsy tax season reports without spreadsheet chaos.
           </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-            ProfitLens helps Etsy sellers prepare a year-end profit report from CSV
+            FlowSync AI helps Etsy sellers prepare a year-end profit report from CSV
             exports before sending numbers to a CPA. Organize sales, refunds, fees,
             ads, shipping labels, tax collected, and optional COGS in one place.
           </p>
@@ -113,7 +113,7 @@ export default function EtsyTaxReportPage() {
               ],
               [
                 "Warnings before download",
-                "ProfitLens highlights missing files and suspicious CSV fields before you rely on the report.",
+                "FlowSync AI highlights missing files and suspicious CSV fields before you rely on the report.",
               ],
             ].map(([title, body]) => (
               <article className="rounded-lg border border-stone-200 p-5" key={title}>
@@ -164,7 +164,7 @@ export default function EtsyTaxReportPage() {
             ))}
           </div>
           <p className="mt-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950">
-            ProfitLens is bookkeeping preparation software. It is not tax, legal, or
+            FlowSync AI is bookkeeping preparation software. It is not tax, legal, or
             accounting advice.
           </p>
         </div>

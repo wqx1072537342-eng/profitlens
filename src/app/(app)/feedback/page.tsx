@@ -37,7 +37,7 @@ export default async function FeedbackPage() {
 
       <section className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
         <form
-          action="mailto:support@profitlens.app"
+          action="mailto:support@flowsyncdata.com"
           className="rounded-lg border border-stone-200 bg-white p-6 shadow-sm"
           encType="text/plain"
           method="post"
@@ -106,7 +106,7 @@ export default async function FeedbackPage() {
             ))}
           </div>
           <div className="mt-5 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm leading-6 text-amber-950">
-            ProfitLens is bookkeeping preparation, not tax advice. For tax filing
+            FlowSync AI is bookkeeping preparation, not tax advice. For tax filing
             decisions, send the exported report to your CPA.
           </div>
         </aside>
