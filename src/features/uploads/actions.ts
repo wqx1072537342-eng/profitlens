@@ -181,11 +181,12 @@ export async function saveUploadBatchAction(
 
   const warningCount = files.reduce((sum, file) => sum + file.warnings.length, 0);
   let batchId = uploadBatchId;
+  let existingFileCount = 0;
 
   if (batchId) {
     const { data: existingBatch, error: existingBatchError } = await supabase
       .from("upload_batches")
-      .select("id")
+      .select("id,file_count")
       .eq("id", batchId)
       .eq("user_id", user.id)
       .single();
@@ -194,6 +195,15 @@ export async function saveUploadBatchAction(
       return {
         message:
           existingBatchError?.message ?? "Upload batch was not found for this account.",
+        status: "error",
+      };
+    }
+
+    existingFileCount = existingBatch.file_count;
+
+    if (existingFileCount + files.length > MAX_UPLOAD_FILES) {
+      return {
+        message: `This report batch can contain at most ${MAX_UPLOAD_FILES} CSV files. Start a separate reporting period after generating this report.`,
         status: "error",
       };
     }

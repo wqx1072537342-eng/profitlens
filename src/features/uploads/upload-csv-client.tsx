@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useRef, useState, useTransition } from "react";
 
 import { generateProfitPreviewAction } from "@/features/reports/actions";
 import type { GenerateProfitPreviewResult } from "@/features/reports/types";
@@ -135,6 +135,7 @@ function buildLocalWorkspace(analyses: EtsyCsvUploadAnalysis[]): UploadWorkspace
 export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClientProps) {
   const router = useRouter();
   const isSignedIn = Boolean(userEmail);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [analyses, setAnalyses] = useState<EtsyCsvUploadAnalysis[]>([]);
   const [workspace, setWorkspace] = useState<UploadWorkspaceBatch | null>(
     initialWorkspace,
@@ -164,13 +165,18 @@ export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClient
     const nextErrors: string[] = [];
 
     if (selectedFiles.length === 0) {
-      setAnalyses([]);
-      setErrorMessages([]);
       return;
     }
 
-    if (selectedFiles.length > MAX_UPLOAD_FILES) {
-      nextErrors.push(`Choose at most ${MAX_UPLOAD_FILES} CSV files per upload batch.`);
+    const existingFileCount = workspace?.files.length ?? analyses.length;
+    const nextBatchFileCount = existingFileCount + selectedFiles.length;
+
+    if (nextBatchFileCount > MAX_UPLOAD_FILES) {
+      nextErrors.push(
+        `This batch can contain at most ${MAX_UPLOAD_FILES} CSV files. You already have ${existingFileCount} file${
+          existingFileCount === 1 ? "" : "s"
+        } in this batch.`,
+      );
     }
 
     for (const file of selectedFiles) {
@@ -190,7 +196,6 @@ export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClient
     }
 
     if (nextErrors.length > 0) {
-      setAnalyses([]);
       setErrorMessages(nextErrors);
       return;
     }
@@ -209,11 +214,12 @@ export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClient
       }),
     );
 
-    setAnalyses(nextAnalyses);
     setErrorMessages([]);
 
     if (!isSignedIn) {
-      const localWorkspace = buildLocalWorkspace(nextAnalyses);
+      const combinedAnalyses = [...analyses, ...nextAnalyses];
+      const localWorkspace = buildLocalWorkspace(combinedAnalyses);
+      setAnalyses(combinedAnalyses);
       setWorkspace(localWorkspace);
       setSaveResult({
         batchId: localWorkspace.batchId,
@@ -232,6 +238,7 @@ export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClient
       }).then((result) => {
         setSaveResult(result);
         if (result.status === "success") {
+          setAnalyses((currentAnalyses) => [...currentAnalyses, ...nextAnalyses]);
           setWorkspace(result.workspace);
         }
       });
@@ -307,13 +314,8 @@ export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClient
     });
   }
 
-  function handleStartNewBatch() {
-    setAnalyses([]);
-    setWorkspace(null);
-    setSaveResult(null);
-    setPreviewResult(null);
-    setGuestPreview(null);
-    setErrorMessages([]);
+  function openFilePicker() {
+    fileInputRef.current?.click();
   }
 
   return (
@@ -392,26 +394,26 @@ export function UploadCsvClient({ initialWorkspace, userEmail }: UploadCsvClient
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
+            <input
+              accept=".csv,text/csv"
+              className="sr-only"
+              multiple
+              onChange={(event) => {
+                void handleFiles(event.currentTarget.files);
+                event.currentTarget.value = "";
+              }}
+              ref={fileInputRef}
+              type="file"
+            />
             <button
-              className="inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
-              onClick={handleStartNewBatch}
+              className="inline-flex items-center justify-center rounded-md bg-teal-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-teal-800"
+              onClick={openFilePicker}
               type="button"
             >
-              Start new batch
+              {workspace && workspace.files.length > 0
+                ? "Add more CSV files"
+                : "Select CSV files"}
             </button>
-            <label className="inline-flex cursor-pointer items-center justify-center rounded-md bg-teal-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-teal-800">
-              Select CSV files
-              <input
-                accept=".csv,text/csv"
-                className="sr-only"
-                multiple
-                onChange={(event) => {
-                  void handleFiles(event.currentTarget.files);
-                  event.currentTarget.value = "";
-                }}
-                type="file"
-              />
-            </label>
           </div>
         </div>
 
