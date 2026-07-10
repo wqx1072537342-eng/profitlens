@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { PublicFooter } from "@/features/marketing/public-site";
+import { PublicFooter, PublicHeader } from "@/features/marketing/public-site";
 import { absoluteUrl } from "@/lib/seo/site";
 
 export const metadata: Metadata = {
@@ -78,27 +78,7 @@ const plans = [
 export default function PricingPage() {
   return (
     <main className="min-h-screen bg-stone-100 text-slate-950">
-      <header className="border-b border-stone-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-          <Link className="text-lg font-black" href="/">
-            ProfitLens
-          </Link>
-          <nav className="flex items-center gap-3 text-sm font-semibold">
-            <Link className="text-slate-600 transition hover:text-slate-950" href="/">
-              Home
-            </Link>
-            <Link className="text-slate-600 transition hover:text-slate-950" href="/login">
-              Log in
-            </Link>
-            <Link
-              className="rounded-md bg-teal-700 px-4 py-2 text-white transition hover:bg-teal-800"
-              href="/signup"
-            >
-              Create account
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <PublicHeader />
 
       <section className="mx-auto max-w-6xl px-5 py-14">
         <div className="max-w-3xl">

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { PublicFooter } from "@/features/marketing/public-site";
+import { PublicFooter, PublicHeader } from "@/features/marketing/public-site";
 import { absoluteUrl, faqJsonLd } from "@/lib/seo/site";
 
 const faqs = [
@@ -51,27 +51,7 @@ export default function EtsyTaxReportPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(faqs)) }}
         type="application/ld+json"
       />
-      <header className="border-b border-stone-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-          <Link className="text-lg font-black" href="/">
-            ProfitLens
-          </Link>
-          <nav className="flex items-center gap-3 text-sm font-semibold">
-            <Link className="text-slate-600 transition hover:text-slate-950" href="/etsy-profit-report">
-              Profit report
-            </Link>
-            <Link className="text-slate-600 transition hover:text-slate-950" href="/sample-report">
-              Sample report
-            </Link>
-            <Link
-              className="rounded-md bg-teal-700 px-4 py-2 text-white transition hover:bg-teal-800"
-              href="/signup"
-            >
-              Start free
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <PublicHeader />
 
       <section className="mx-auto grid max-w-6xl gap-10 px-5 py-14 lg:grid-cols-[1fr_1fr]">
         <div>
