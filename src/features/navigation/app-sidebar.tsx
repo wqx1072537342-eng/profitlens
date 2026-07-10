@@ -37,7 +37,7 @@ export function AppSidebar({
     <>
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-stone-200 bg-white lg:flex lg:flex-col">
         <div className="border-b border-stone-200 px-6 py-5">
-          <Link className="text-xl font-black text-slate-950" href="/dashboard">
+          <Link className="text-xl font-black text-slate-950" href="/">
             ProfitLens
           </Link>
           <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-teal-800">
@@ -106,7 +106,7 @@ export function AppSidebar({
 
       <header className="sticky top-0 z-30 border-b border-stone-200 bg-white/95 backdrop-blur lg:hidden">
         <div className="flex items-center justify-between gap-3 px-4 py-3">
-          <Link className="text-lg font-black text-slate-950" href="/dashboard">
+          <Link className="text-lg font-black text-slate-950" href="/">
             ProfitLens
           </Link>
           <AccountMenu email={email} />
