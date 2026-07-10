@@ -1,5 +1,8 @@
 import Link from "next/link";
 
+import { AccountMenu } from "@/features/auth/account-menu";
+import { getCurrentUser } from "@/features/auth/session";
+
 const footerSections = [
   {
     links: [
@@ -34,7 +37,9 @@ const footerSections = [
   },
 ];
 
-export function PublicHeader() {
+export async function PublicHeader() {
+  const { user } = await getCurrentUser();
+
   return (
     <header className="border-b border-stone-200 bg-white">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
@@ -58,17 +63,26 @@ export function PublicHeader() {
             Contact
           </Link>
         </nav>
-        <div className="flex items-center gap-3 text-sm font-semibold">
-          <Link className="text-slate-600 transition hover:text-slate-950" href="/login">
-            Log in
-          </Link>
-          <Link
-            className="rounded-md bg-teal-700 px-4 py-2 text-white transition hover:bg-teal-800"
-            href="/signup"
-          >
-            Start free
-          </Link>
-        </div>
+        {user ? (
+          <div className="flex items-center gap-3 text-sm font-semibold">
+            <Link className="hidden text-teal-800 transition hover:text-teal-900 sm:inline" href="/dashboard">
+              Dashboard
+            </Link>
+            <AccountMenu email={user.email} />
+          </div>
+        ) : (
+          <div className="flex items-center gap-3 text-sm font-semibold">
+            <Link className="text-slate-600 transition hover:text-slate-950" href="/login">
+              Log in
+            </Link>
+            <Link
+              className="rounded-md bg-teal-700 px-4 py-2 text-white transition hover:bg-teal-800"
+              href="/signup"
+            >
+              Start free
+            </Link>
+          </div>
+        )}
       </div>
     </header>
   );
